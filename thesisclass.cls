@@ -46,6 +46,10 @@
 
 \usepackage{amssymb}
 \usepackage{csquotes}
+\usepackage{mathtools}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
 \usepackage[raiselinks=true,
 						bookmarks=true,

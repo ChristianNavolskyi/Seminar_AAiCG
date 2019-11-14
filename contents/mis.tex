@@ -15,20 +15,20 @@ In a discrete scenario our random variable corresponds to one exact event e.g. a
 The probability for this can be expressed as $ P(X = 3) = \frac{1}{6} $ or as $ X(3) = \frac{1}{6} $
 since the random variable $ X $ can take six different values which are all equally likely.
 To express the probability that an event is within a range of values we can use the cdf
-which is defined as $ F(x) = P(X \leq x), x \in \mathbb{R} $.
-For the probability of a random variable in an interval $ [a, b) $ we can write $ P(a \leq X < b) = F(b) - F(a) $.\cite{pris}
+which is defined as $$ F(x) = P(X \leq x), x \in \mathbb{R}. $$
+For the probability of a random variable in an interval $ [a, b) $ we can write $$ P(a \leq X < b) = F(b) - F(a). \cite{pris} $$
 
 When we are talking about continuous events e.g. turning a wheel of fortune, every exact angle has a probability of zero.
 But we can still express our probability for an angle interval with the cdf from above.
-In the continuous case we have a pdf that is used to calculate the cdf with $ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x} $.
+In the continuous case we have a pdf that is used to calculate the cdf with $$ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x}. $$
 The pdf has to be non-negative ($ \forall x: p(x) \geq 0 $) and integrate to one ($ \int_{-\infty}^{\infty} p(x) dx = 1$) to be valid and
-\enquote{[...] describes the relative probability of a random variable taking on a particular value.}\cite{pbr-book}
+\enquote{[...] describes the relative probability of a random variable taking on a particular value.}\cite[Chapter~13.1]{pbr-book}
 \todo{How to cite when the content of this section was created with a reference?}
 
 
 \section{Generating Samples after a specific Function}
 \label{sec:sample_generation}
-This will be very important for the next section \ref{sec:monte_carlo_importance_sammpling},
+This will be very important for the next section \ref{sec:monte_carlo},
 since this is our adjustment wheel to manipulate the quality of our rendering (for a given amount of time).
 Most of the time we don't need evenly distributed samples,
 rather our samples should follow a specific characteristic of a material or a scene.
@@ -39,26 +39,52 @@ First we check that $ \forall x \in [a, b): f(x) \geq 0 $ and then calculate the
 $ F $ can be used to normalize our goal function which yields us $ \tilde{f}(x) = \frac{f(x)}{F} $ as a valid pdf.
 The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ which we will then invert to get $ F^{-1}(x) $.
 Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
-which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed after $ f(.) $.\cite{pris}
+which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed after $ f(.) $.
+This method is called "inverse cdf". \cite{pris}
+\todo{Should I also cover 2D sampling?}
+\todo{Should I cover more sampling methods (rejection sampling e.g.)}
 
-
-\section{Monte Carlo and Importance Sampling}
-\label{sec:monte_carlo_importance_sammpling}
+\section{Monte Carlo Integration}
+\label{sec:monte_carlo}
 
 Monte Carlo integration is a technique to approximate the integral of an arbitrary function $ f(x) $
-by taking $ N $ random samples $ X_i $ from a probability density function (pdf) $ p(X_i) $.
-$ X_i $ is a random variable that belongs to one particular event (e.g. $ X_0 = 1 $ when throwing a dice and it shows $ 1 $) or in the
+by taking $ N $ random samples $ X_i $ from a pdf $ p(X_i) $.
+As we know the expectation of a random variable is calculated by $$ E(X) = \int_{-\infty}^\infty x * p(x) dx $$
+or more generally $$ E(g(x)) = \int_{-\infty}^\infty g(x) * p(x) dx. $$
+For the next step we need the law of large numbers which states that $$ P\left[ \lim_{N\to\infty} \frac{1}{N} \sum_{i = 0}^N X_i = E(X) \right] = 1 $$
+with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expectation \cite[Chapter~2.4.1]{veach-thesis}.
+From here we can formulate
+\begin{equation*}
+    E(g(x)) \stackrel{definition}{=} \int_{a}^b g(x) * p(x) dx
+    \stackrel{Law~of~large~numbers}{\approx} \frac{1}{N} \sum_{i = 0}^N g(x_i)
+\end{equation*}
+and with $ g(x) = \frac{f(x)}{p(x)} $
+\begin{equation*}
+\begin{aligned}
+    \int_{a}^b \frac{f(x)}{p(x)} p(x) dx &\approx \frac{1}{N} \sum_{i = 0}^N \frac{f(x)}{p(x)} \\
+    \Leftrightarrow \int_{a}^b f(x) dx &\approx \frac{1}{N} \sum_{i = 0}^N \frac{f(x)}{p(x)}
+\end{aligned}
+\end{equation*}
+which is exactly what the Monte Carlo equation is \cite{pris}.
 
-To draw samples in a Monte Carlo renderer a sampling technique has to be chosen.
-This choice has a significant impact on the variance and therefore the noise in the final image.
-We need a probability density function (pdf) $ p(x) $ that integrates to one ($ 1 = \int_{-\infty}^{\infty} p(x) dx $)
-and is non-negative ($ \forall x: p(x) \geq 0 $).
-Now we can draw samples
+\todo{Introduce Variance to motivate Importance Sampling}
 
 
-The general formula for the Monte Carlo integration is $ F \approx \frac{1}{n} \sum_{i = 1}^n \frac{f(X_i)}{p(X_i)} $, with $ i = 1,...,n $  $ X_i $ is a random sa
+The formula for this integral is $ F \approx \frac{1}{n} \sum_{i = 1}^n \frac{f(X_i)}{p(X_i)} $ which gives us an constraints for $ f(.) $ and $ p(.) $
+namely $ \forall \{x | |f(x)| > 0\}: p(x) > 0 $ else we would miss some values and our end result would be wrong. \cite[Chapter~13.2]{pbr-book}
 
+
+
+\section{Importance Sampling}
+\label{sec:importance_sampling}
+\todo{Show why a good pdf can reduce the variance}
+\todo{Show the limits of one single pdf -> motivation for mis}
+
+
+
+\section{Multiple Importance Sampling}
+\label{sec:multiple_importance_sampling}
+\todo{Motivate with examples from rendering context}
 
 \todo{Explain MIS in more detail than in the paper}
-
 \todo{check what happends, when one technique says probability is 0}
