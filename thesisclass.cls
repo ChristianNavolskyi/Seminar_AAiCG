@@ -38,11 +38,14 @@
 \usepackage{url}
 \usepackage[absolute,overlay]{textpos}
 \usepackage{tikz}
-\usepackage[english,ngerman]{babel}
+\usepackage[english]{babel}
 \usepackage{algorithm}		  % Code-Listings
 \usepackage{algorithmic}	  % Code-Listings
 % see http://www.ctan.org/tex-archive/macros/latex/contrib/algorithm2e/algorithm2e.pdf
 % for more sophisticated algorithm listings
+
+\usepackage{amssymb}
+\usepackage{csquotes}
 
 \usepackage[raiselinks=true,
 						bookmarks=true,
@@ -53,12 +56,12 @@
 						plainpages=false,
 						pdfpagelabels=true,
 						pdfborder={0 0 0.5},
-						colorlinks=false,						
-						linkbordercolor={0 0.61 0.50},   
+						colorlinks=false,
+						linkbordercolor={0 0.61 0.50},
 						citebordercolor={0 0.61 0.50}]{hyperref}  %{0.57 0.74 0.57}
-						
+
 \usepackage[fixlanguage]{babelbib}	% sets german style for literature entries
-\selectbiblanguage{ngerman}			% for \bibliographystyle{babalpha}
+\selectbiblanguage{english}			% for \bibliographystyle{babalpha}
 %% --- End of Packages ---
 
 
@@ -228,12 +231,12 @@
 %% ----------------------------------
 %% |  Style of appendix numbering   |
 %% ----------------------------------
- \renewcommand\appendix{\par 
-   \setcounter{section}{0}% 
-   \setcounter{subsection}{0}% 
+ \renewcommand\appendix{\par
+   \setcounter{section}{0}%
+   \setcounter{subsection}{0}%
    \setcounter{figure}{0}%
-   \renewcommand\thesection{\Alph{section}}% 
-   \renewcommand\thefigure{\Alph{section}.\arabic{figure}} 
+   \renewcommand\thesection{\Alph{section}}%
+   \renewcommand\thefigure{\Alph{section}.\arabic{figure}}
    \renewcommand\thetable{\Alph{section}.\arabic{table}}}
 %% --- End of appenix numbering style ---
 

@@ -1,4 +1,64 @@
 \chapter{Multiple Importance Sampling}
 \label{ch:mis}
 
+\todo{Match to actual structure of this chapter}
+In this chapter the fundamentals of Monte Carlo integration and importance sampling will be introduced.
+After that Multiple Importance Sampling is explained which is the fundament for the next chapter \ref{ch:mis_compensation}.
+
+
+\section{Probability Basics}
+\label{sec:probability_basics}
+
+For our use case we need to define random variables, probability distribution functions (pdf) and cumulative distribution functions (cdf).
+A random variable maps an event to a real number $ X: \Omega \to \mathbb{R} $.
+In a discrete scenario our random variable corresponds to one exact event e.g. a dice throw showing three pips on the top.
+The probability for this can be expressed as $ P(X = 3) = \frac{1}{6} $ or as $ X(3) = \frac{1}{6} $
+since the random variable $ X $ can take six different values which are all equally likely.
+To express the probability that an event is within a range of values we can use the cdf
+which is defined as $ F(x) = P(X \leq x), x \in \mathbb{R} $.
+For the probability of a random variable in an interval $ [a, b) $ we can write $ P(a \leq X < b) = F(b) - F(a) $.\cite{pris}
+
+When we are talking about continuous events e.g. turning a wheel of fortune, every exact angle has a probability of zero.
+But we can still express our probability for an angle interval with the cdf from above.
+In the continuous case we have a pdf that is used to calculate the cdf with $ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x} $.
+The pdf has to be non-negative ($ \forall x: p(x) \geq 0 $) and integrate to one ($ \int_{-\infty}^{\infty} p(x) dx = 1$) to be valid and
+\enquote{[...] describes the relative probability of a random variable taking on a particular value.}\cite{pbr-book}
+\todo{How to cite when the content of this section was created with a reference?}
+
+
+\section{Generating Samples after a specific Function}
+\label{sec:sample_generation}
+This will be very important for the next section \ref{sec:monte_carlo_importance_sammpling},
+since this is our adjustment wheel to manipulate the quality of our rendering (for a given amount of time).
+Most of the time we don't need evenly distributed samples,
+rather our samples should follow a specific characteristic of a material or a scene.
+For this we need to know how to generate samples that correspond to that characteristic.
+
+Given a function $ f(x) $ after which we would like to draw samples the first step is to make sure it fulfills the constraints for a pdf in an interval $ [a, b) $ we want to use.
+First we check that $ \forall x \in [a, b): f(x) \geq 0 $ and then calculate the integral with $ F = \int_{a}^b f(x) dx $.
+$ F $ can be used to normalize our goal function which yields us $ \tilde{f}(x) = \frac{f(x)}{F} $ as a valid pdf.
+The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ which we will then invert to get $ F^{-1}(x) $.
+Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
+which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed after $ f(.) $.\cite{pris}
+
+
+\section{Monte Carlo and Importance Sampling}
+\label{sec:monte_carlo_importance_sammpling}
+
+Monte Carlo integration is a technique to approximate the integral of an arbitrary function $ f(x) $
+by taking $ N $ random samples $ X_i $ from a probability density function (pdf) $ p(X_i) $.
+$ X_i $ is a random variable that belongs to one particular event (e.g. $ X_0 = 1 $ when throwing a dice and it shows $ 1 $) or in the
+
+To draw samples in a Monte Carlo renderer a sampling technique has to be chosen.
+This choice has a significant impact on the variance and therefore the noise in the final image.
+We need a probability density function (pdf) $ p(x) $ that integrates to one ($ 1 = \int_{-\infty}^{\infty} p(x) dx $)
+and is non-negative ($ \forall x: p(x) \geq 0 $).
+Now we can draw samples
+
+
+The general formula for the Monte Carlo integration is $ F \approx \frac{1}{n} \sum_{i = 1}^n \frac{f(X_i)}{p(X_i)} $, with $ i = 1,...,n $  $ X_i $ is a random sa
+
+
 \todo{Explain MIS in more detail than in the paper}
+
+\todo{check what happends, when one technique says probability is 0}
