@@ -34,8 +34,13 @@ Most of the time we don't need evenly distributed samples,
 rather our samples should follow a specific characteristic of a material or a scene.
 For this we need to know how to generate samples that correspond to that characteristic.
 
-Given a function $ f(x) $ after which we would like to draw samples the first step is to make sure it fulfills the constraints for a pdf in an interval $ [a, b) $ we want to use.
-First we check that $ \forall x \in [a, b): f(x) \geq 0 $ and then calculate the integral with $ F = \int_{a}^b f(x) dx $.
+Given a function $ f(x) $ after which we would like to draw samples the first step is to make sure
+it fulfills the constraints for a pdf in an interval $ [a, b) $ we want to use.
+First we check that $ \forall x \in [a, b): f(x) \geq 0 $ and then calculate the integral with
+\begin{equation}
+\label{eq:integral_fx}
+    F = \int_{a}^b f(x) dx.
+\end{equation}
 $ F $ can be used to normalize our goal function which yields us $ \tilde{f}(x) = \frac{f(x)}{F} $ as a valid pdf.
 The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ which we will then invert to get $ F^{-1}(x) $.
 Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
@@ -55,8 +60,8 @@ For the next step we need the law of large numbers which states that $$ P\left[ 
 with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expectation \cite[Chapter~2.4.1]{veach-thesis}.
 From here we can formulate
 \begin{equation*}
-    E(g(x)) \stackrel{definition}{=} \int_{a}^b g(x) * p(x) dx
-    \stackrel{Law~of~large~numbers}{\approx} \frac{1}{N} \sum_{i = 0}^N g(x_i)
+    \int_{a}^b g(x) * p(x) dx \stackrel{definition}{=} E(g(x))
+    \stackrel{law~of~large~numbers}{\approx} \frac{1}{N} \sum_{i = 0}^N g(x_i)
 \end{equation*}
 and with $ g(x) = \frac{f(x)}{p(x)} $
 \begin{equation*}
@@ -65,25 +70,46 @@ and with $ g(x) = \frac{f(x)}{p(x)} $
     \Leftrightarrow \int_{a}^b f(x) dx &\approx \frac{1}{N} \sum_{i = 0}^N \frac{f(x)}{p(x)}
 \end{aligned}
 \end{equation*}
-which is exactly what the Monte Carlo equation is \cite{pris}.
+which is basically the Monte Carlo equation \cite{pris}.
 
-\todo{Introduce Variance to motivate Importance Sampling}
-
-
-The formula for this integral is $ F \approx \frac{1}{n} \sum_{i = 1}^n \frac{f(X_i)}{p(X_i)} $ which gives us an constraints for $ f(.) $ and $ p(.) $
-namely $ \forall \{x | |f(x)| > 0\}: p(x) > 0 $ else we would miss some values and our end result would be wrong. \cite[Chapter~13.2]{pbr-book}
-
+The last thing we want to introduce in this section is variance in the Monte Carlo integral.
+Generally the variance is described by $$ V(X) = \frac{1}{N} \sum_{i = 0}^N (x_i - E(X))^2 $$ for discrete random variables \cite{pris}
+and $$ V(X) = \int_{a}^b (x - I)^2 * p(x) dx $$ with $ I $ being the mean of the random variable $ X $ for continuous variables \cite{wyzant}.
+When we look at the variance of our Monte Carlo integral we get
+\begin{equation}
+\label{eq:monte_carlo_variance}
+\begin{aligned}
+    V(g(x)) &= \int_{a}^b (g(x) - F)^2 * p(x) dx \\
+            &= \int_{a}^b \left(\frac{f(x)}{p(x)} - F\right)^2 * p(x) dx
+\end{aligned}
+\end{equation}
+with $ F $ being the integral from equation \ref{eq:integral_fx}.
 
 
 \section{Importance Sampling}
 \label{sec:importance_sampling}
-\todo{Show why a good pdf can reduce the variance}
-\todo{Show the limits of one single pdf -> motivation for mis}
-
+With the variance from equation \ref{eq:monte_carlo_variance} let's see how we can improve it.
+We can easily see that reducing the term $ \frac{f(x)}{p(x)} - F $ will finally reduce the variance the most since it will be exponentiated.
+Since $ F $ and $ f(.) $ are fixed (that is the integral we want to calculate) only $ p(.) $ is left for modification.
+When we choose $$ p(x) = \frac{f(x)}{\int_{a}^b f(x) dx} $$ we get
+\begin{equation*}
+\begin{aligned}
+    \frac{f(x)}{p(x)} - F &= \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F \\
+        &\stackrel{\ref{eq:integral_fx}}{=} \int_{a}^b f(x) dx - \int_{a}^b f(x) dx
+        &= 0
+\end{aligned}
+\end{equation*}
+which is perfect as we get a variance of 0 and are done.
+The problem is that we don't know the integral at the start since that is what we want to calculate in the first place.
+When we look at our chosen pdf we see that $ p(.) $ is proportional to $ f(.) $ by a factor $ \frac{1}{\int_{a}^b f(x) dx} = \frac{1}{F} := c $.
+So we should at least try to chose $ p(.) $ somewhat proportional to $ f(.) $.
+The difficulty is that $ f(.) $ can be arbitrary complex so we might only be able to approximate some part of it with one specific pdf.
 
 
 \section{Multiple Importance Sampling}
 \label{sec:multiple_importance_sampling}
+Having multiple pdfs where each samples a different part of $ f(.) $ well
+we would like to combine then to get the benefits from all of them.
 \todo{Motivate with examples from rendering context}
 
 \todo{Explain MIS in more detail than in the paper}
