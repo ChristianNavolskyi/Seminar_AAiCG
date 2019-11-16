@@ -19,11 +19,14 @@ Karl\'ik et al. proposed a method to do exactly that and show that it can improv
 They assumed multiple sampling techniques and pick one probability density function (pdf) of a technique and modify it in a way that it compensates for the averaging introduced by the balance heuristic.
 Their optimization can be applied beforehand and doesn't need adaptive updates as the work of Capp\'e et al.~\cite{Cappe2008}.
 Others created product sampling methods~\cite{Herholz} that try to match the integrand closer,
-but MIS Compensation as, Karl\'ik et al. call their method,
+but MIS compensation as, Karl\'ik et al. call their method,
 on the other hand can even cause a pdf to be further away from the integrand but still reduce the variance~\cite{Karlik2019}.
 
-
-
-\todo{Write introduction. Structure as in the paper (overview, problem, others, solution proposal)}
-
-\todo{Citation before the dot. In more than one scentance, name in the first sentence and referenc in the last sentence.}
+Karl\'ik et al. show the effects of their MIS compensation with direct illumination using a HDR environment map
+and a scene with surfaces that have multiple different bidirectional reflectance distribution functions (BRDF).
+The standard approach with MIS would take samples proportional to the BRDF and the environment map,
+but they assume this approach to be too defensive and modify the pdf for the environment map in a way that the variance is reduced
+and therefore render times can be improved.
+Their modification is done by applying a formula to the tabulated pdf in a preprocessing step
+after which any renderer able to use HDR maps for MIS sampling can use the updated environment map for sampling without any further adjustment.\\
+They also used their approach in path guiding~\cite{Vorba_2019} which learns a guiding density to improve the algorithm of~\cite{mueller2017} by adjusting that density~\cite{Karlik2019}.
