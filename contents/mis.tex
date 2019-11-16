@@ -15,13 +15,13 @@ The probability for this can be expressed as $ P(X = 3) = \frac{1}{6} $ or as $ 
 since the random variable $ X $ can take six different values which are all equally likely.
 To express the probability that an event is within a range of values we can use the cdf
 which is defined as $$ F(x) = P(X \leq x), x \in \mathbb{R}. $$
-For the probability of a random variable in an interval $ [a, b) $ we can write $$ P(a \leq X < b) = F(b) - F(a). \cite{pris} $$
+For the probability of a random variable in an interval $ [a, b) $ we can write $$ P(a \leq X < b) = F(b) - F(a)~\cite{pris}. $$
 
 When we are talking about continuous events e.g. turning a wheel of fortune, every exact angle has a probability of nearing zero.
 But we can still express our probability for an angle interval with the cdf from above.
 In the continuous case we have a pdf that is used to calculate the cdf with $$ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x}. $$
 The pdf has to be non-negative ($ \forall x: p(x) \geq 0 $) and integrate to one ($ \int_{-\infty}^{\infty} p(x) dx = 1$) to be valid and
-\enquote{[...] describes the relative probability of a random variable taking on a particular value.}\cite[Chapter~13.1]{pbr-book}
+\enquote{[...] describes the relative probability of a random variable taking on a particular value}~\cite[Chapter~13.1]{pbr-book}.
 \todo{How to cite when the content of this section was created with a reference?}
 
 
@@ -44,7 +44,7 @@ $ F $ can be used to normalize our goal function which yields us $ \tilde{f}(x) 
 The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ which we will then invert to get $ F^{-1}(x) $.
 Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
 which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed proportional to $ f(.) $.
-This method is called "inverse cdf". \cite{pris}
+This method is called "inverse cdf"~\cite{pris}.
 \todo{Should I also cover 2D sampling?}
 \todo{Should I cover more sampling methods (rejection sampling e.g.)}
 
@@ -56,7 +56,7 @@ by taking $ N $ random samples $ X_i $ from a pdf $ p(X_i) $.
 As we know the expectation of a random variable is calculated by $$ E(X) = \int_{-\infty}^\infty x p(x) dx $$
 or more generally $$ E(g(x)) = \int_{-\infty}^\infty g(x) p(x) dx. $$
 For the next step we need the law of large numbers which states that $$ P\left[ \lim_{N\to\infty} \frac{1}{N} \sum_{i = 1}^N X_i = E(X) \right] = 1 $$
-with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expected value \cite[Chapter~2.4.1]{veach-thesis}.
+with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expected value~\cite[Chapter~2.4.1]{veach-thesis}.
 From here we can formulate
 \begin{equation*}
     \int_{a}^b g(x) p(x) dx \stackrel{definition}{=} E(g(x))
@@ -64,19 +64,19 @@ From here we can formulate
 \end{equation*}
 and with $ g(x) = \frac{f(x)}{p(x)} $
 \begin{equation}
+\label{eq:monte_carlo_integral}
 \begin{aligned}
-    \label{eq:monte_carlo_integral}
     \int_{a}^b \frac{f(x)}{p(x)} p(x) dx &\approx \frac{1}{N} \sum_{i = 1}^N \frac{f(x)}{p(x)} \\
     \Leftrightarrow \int_{a}^b f(x) dx &\approx \frac{1}{N} \sum_{i = 1}^N \frac{f(x)}{p(x)}
 \end{aligned}
 \end{equation}
-which is the Monte Carlo estimator \cite{pris}.
+which is the Monte Carlo estimator~\cite{pris}.
 
 
 \subsection{Variance}
 \label{sec:variance}
-Generally the variance is described by $$ V(X) = \frac{1}{N} \sum_{i = 1}^N (x_i - E(X))^2 $$ for discrete random variables \cite{pris}
-and $$ V(X) = \int_{a}^b (x - I)^2 p(x) dx $$ with $ I $ being the mean of the random variable $ X $ for continuous variables \cite{wyzant}.
+Generally the variance is described by $$ V(X) = \frac{1}{N} \sum_{i = 1}^N (x_i - E(X))^2 $$ for discrete random variables~\cite{pris}
+and $$ V(X) = \int_{a}^b (x - I)^2 p(x) dx $$ with $ I $ being the mean of the random variable $ X $ for continuous variables~\cite{wyzant}.
 When we look at the variance of our Monte Carlo integral we get
 \begin{equation}
 \label{eq:monte_carlo_variance}
@@ -123,7 +123,7 @@ where the $ ^+ $ means we are only taking values $ > 0 $ so only directions poin
 With this we can see that a single pdf that only is proportional to e.g., the BSDF leaves out the $ L_r(.) $ term so it can't be optimal.
 Having multiple pdfs where each samples a different part of the rendering equation well
 a combination of them should create a good result.
-E. Veach created a good example of this problem in his thesis \cite{veach-thesis} which can be seen in figure \ref{fig:veach_mis_single}.
+E. Veach created a good example of this problem in his thesis~\cite{veach-thesis} which can be seen in figure \ref{fig:veach_mis_single}.
 He also introduced Multiple Importance Sampling to use a combination of pdfs to get better results than would be possible with only one pdf.
 
 When sampling only the BSDF we see that in figure \ref{fig:veach_mis_bsdf} the bottom left reflection is very noisy,
@@ -158,12 +158,12 @@ But now the top right reflection is noisy because the direction to a random poin
     and four horizontal objects with BSDFs from diffuse at the bottom to more and more specular at the top.\\
     (a) This scene is sampled using a pdf that is proportional to the BSDF of the surface.\\
     (b) Here the scene was sampled with a pdf that generated samples on the light source.
-    \cite[Figure~9.2]{veach-thesis}}
+    These graphics were taken from~\cite[Figure~9.2]{veach-thesis}.}
     \label{fig:veach_mis_single}
 \end{figure}
 
 If we could combine both approaches the result should cover all cases and show all reflections well.
-To do this Veach introduced Multiple Importance Sampling \cite[Chapter~9]{veach-thesis}.
+To do this Veach introduced Multiple Importance Sampling~\cite[Chapter~9]{veach-thesis}.
 The updated estimator now looks like this: $$ F = \sum_{i = 1}^k \frac{1}{n_i} \sum_{j = 1}^{n_i} w_i(X_{i,j}) \frac{f(X_{i,j})}{p(X_{i,j})}. $$
 Compared to the initial estimator from equation \ref{eq:monte_carlo_integral} we now have additional weight functions $ w_i(.) $
 and split up our samples over the $ k $ different sampling technique with $ n = \sum_{i = 1}^k~n_i $.
@@ -181,7 +181,7 @@ A concrete weighting function will be introduced in the next subsection.
 
 \subsection{Balance Heuristic}
 \label{sec:balance_heuristic}
-A very popular weighting function also introduced by Veach \cite[Chapter~9.2.2]{veach-thesis} is the balance heuristic.
+A very popular weighting function also introduced by Veach is the balance heuristic~\cite[Chapter~9.2.2]{veach-thesis}.
 The formula to calculate it is as follows: $$ w_i(x) = \frac{n_i p_i(x)}{\sum_{j = 1}^k n_j p_j(x)} $$
 So the weight for a sample consists of the amount of samples $ n_i $ drawn with that technique,
 the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
@@ -190,17 +190,10 @@ the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 \begin{figure}[h]
     \centering
     \includegraphics[width=.45\textwidth]{images/veach_mis_both.png}
-    \caption{This image shows the same scene as in figure \ref{fig:veach_mis_single} but rendered using the balance heuristic. Taken from \cite[Figure~9.4]{veach-thesis}}
+    \caption{This image shows the same scene as in figure \ref{fig:veach_mis_single} but rendered using the balance heuristic. Taken from~\cite[Figure~9.4]{veach-thesis}.}
     \label{fig:veach_mis_balance}
 \end{figure}
 
 Figure \ref{fig:veach_mis_balance} show that with the balance heuristic the noisy areas we observed
 while only using a single pdf in figure \ref{fig:veach_mis_single} disappeared
 and all combinations of surface roughness and light source size are well represented.
-
-
-
-\todo{Motivate with examples from rendering context}
-
-\todo{Explain MIS in more detail than in the paper}
-\todo{check what happends, when one technique says probability is 0}
