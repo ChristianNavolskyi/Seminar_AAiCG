@@ -30,6 +30,18 @@ and iteratively updating $ \sigma^2_i $ and calculating the distribution $ \alph
 What all the above techniques have in common is that they all rely on initial samples to fine tune their succeeding execution.
 The proposed method of Karl\'ik et al. on the other had doesn't need any prior samples to be taken and therefore their performance impact should be much smaller~\cite{Karlik2019}.
 
+One widely used application of MIS is image based lighting with BSDF and HDR map sampling~\cite{pbr-book}.
+When using a HDR environment map for direct illumination the pdf for that map is usually proportional to the brightness of the HDR map,
+Karl\'ik et al.~\cite{Karlik2019} created a method that alters that sampling density to further decrease the variance.
+Agarwal et al. came up with the idea of stratifying the environment map
+and taking into account the visibility in the scene
+to create a method that can require up to two orders of magnitude less samples for the same quality~\cite{agarwal}.\\
+Another approach from Clarberg and Akenine-Möller uses product importance sampling
+and creating the BSDF on the fly during rendering.
+Their precomputation step uses quadtree-based multiplication while during rendering they build the approximation of the BSDF
+and evaluate the product in only one single tree traversal which makes it perform faster than other methods~\cite{clarberg}.\\
+The method of Karl\'ik et al. does not change the sampling procedure itself and therefore can work without modifications of the environment map sampler~\cite{Karlik2019}.
+
 
 
 
