@@ -1,5 +1,36 @@
 \chapter{Related Work}
 \label{ch:related_work}
 
+The MIS framework was introduced in~\cite{veach_guibas}
+and combines multiple different sampling techniques with a weighting function to sample a more complex function better.
+In their work they proposed a few different weighting functions the most famous being the balance heuristic,
+but also the power and cutoff heuristic which perform better in certain scenarios where one techniques matches the integrand well.
+Despite the balance heuristic being provably good Kondapaneni et al.~\cite{Kondapaneni2019} developed a weighting function that is truly optimal
+and uses negative weights to archive even better results.\\
+A lot of work has been put into optimizing the weighting functions,
+but Karl\'ik et al. followed a different approach
+and worked on a technique to adjust one sampling density to reduce the variance.
+\todo{Last sentence in first paragraph}
+
+Another direction of research in the field of MIS is to figure out how to distribute the samples over the different sampling techniques.
+Pajot et al.~\cite{pajot} proposed a method where they calculate a so called representativity based on common rendering information such as the BRDF,
+which is a measure of how well a technique matches the integrand.
+In a one-sample estimator this representativity can also be used to derive a probability for each sampling strategy.\\
+Lu et al.~\cite{lu} created a method where no prior knowledge about the scene is needed to generate a sample distribution over two sampling strategies.
+They start by sampling with a small number of samples evenly distributed over the strategies
+and calculate a value to partition the total number of samples over the sampling techniques.\\
+He and Owen~\cite{he} presented another method to get a partitioning of samples for more than two strategies
+by proving that the variance is jointly convex in the distribution of samples.
+They also proposed an improved method for convex optimization to find such a distribution.\\
+Sbert et al.~\cite{sbert} worked on a modification of the balance heuristic that doesn't take the distribution of samples into account for calculating the weights.
+Their method works in two phases.
+The first phase uses 20\% of the total samples equally distributed over all sampling methods to calculate the variance $ \sigma^2_i $.
+After that the following stage is subdivided into eight substages each using 10\% of the total number of samples
+and iteratively updating $ \sigma^2_i $ and calculating the distribution $ \alpha $ over the techniques for the next substage.\\
+What all the above techniques have in common is that they all rely on initial samples to fine tune their succeeding execution.
+The proposed method of Karl\'ik et al. on the other had doesn't need any prior samples to be taken and therefore their performance impact should be much smaller~\cite{Karlik2019}.
+
+
+
 
 \todo{Sum up what others did in this field.}
