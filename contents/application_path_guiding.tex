@@ -1,9 +1,21 @@
 \chapter{Application: Path Guiding}
 \label{ch:application_pg}
+In this chapter we will give a short overview of what path guiding is.
+After that we will look at how Kerl\'ik et al.~\cite{Karlik2019} applied MIS compensation on path guiding to further improve render quality.
+
 
 \section{Path Guiding}
 \label{sec:path_guiding}
-\todo{Explain the concept of path guiding}
+The ides behind importance sampling is to let the sampling density be proportional to the integrand
+to get a small as possible variance in the result or image in our use case.
+Normally we can use the BRDF and the direct illumination to create two sampling distributions,
+but one important part is the indirect illumination which is not known beforehand and therefore can't be used easily.
+That's exactly what path guiding is for.
+It learns the incident radiance and builds a distribution based on this.
+This distribution is then used to create a new image from scratch to create a better distribution
+until the final iterations yields the image after combining all iterations weighted by their inverse variance~\cite{Vorba_2019}.
+During rendering the distribution can be normally used in MIS.
+
 
 \section{MIS Compensation in Path Guiding}
 \label{sec:misc_path_guiding}
