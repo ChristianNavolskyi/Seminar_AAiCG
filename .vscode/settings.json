@@ -2,5 +2,10 @@
     "cSpell.words": [
         "ik",
         "karl\\'ik"
+    ],
+    "cSpell.ignoreWords": [
+        "capp\\'e",
+        "karl\\'ik",
+        "uller"
     ]
 }

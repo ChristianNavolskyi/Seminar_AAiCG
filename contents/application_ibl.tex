@@ -1,10 +1,28 @@
 \chapter{Application: Image Based Lighting}
 \label{ch:application_ibl}
-\todo{Explain the contents of this chapter}
+In this chapter we start by describing image based lighting shortly.
+Following that the approach of Karl\'ik et al. is explained to use in image based lighting.
+\todo{Explain the contents of this chapter (at the end)}
+
 
 \section{Image Based Lighting}
 \label{sec:ibl}
-\todo{Explain Image based lighting shortly}
+Creating realistic lighting for a scene can be very complex and time consuming.
+To avoid modelling a lighting environment a commonly used method is to create an image of a real world environment
+and using that for the direct illumination of a scene.
+This approach is called image based lighting and was introduced back in 1998 by Debevec in~\cite{debevec}.\\
+To get the lighting of a scene in the real world you could place a mirror sphere in the middle of your scene
+and the a photo of that sphere ideally from far away
+so the camera itself doesn't take up a large part of the scene.
+The name of this method is sphere mapping.
+During rendering you place your scene in the center of that textured sphere
+and if a shadow ray doesn't hit any object of the scene you read out the texel
+on the sphere that corresponds to the direction of the ray.\\
+A different method is to take six pictures of the scene from the top, bottom, left, right, front and back
+and then use the same evaluation method as with the sphere with the direction of the shadow ray direction
+to get the texel from the environment map.
+For more information on how to use environment maps/image based lighting consider~\cite{environment_map}.
+
 
 \section{MIS Compensation in Image Based Lighting}
 \label{sec:misc_ibl}
