@@ -10,7 +10,6 @@ and uses negative weights to archive even better results.\\
 A lot of work has been put into optimizing the weighting functions,
 but Karl\'ik et al. followed a different approach
 and worked on a technique to adjust one sampling density to reduce the variance.
-\todo{Last sentence in first paragraph}
 
 Another direction of research in the field of MIS is to figure out how to distribute the samples over the different sampling techniques.
 Pajot et al.~\cite{pajot} proposed a method where they calculate a so called representativity based on common rendering information such as the BRDF,
@@ -42,7 +41,9 @@ Their precomputation step uses quadtree-based multiplication while during render
 and evaluate the product in only one single tree traversal which makes it perform faster than other methods~\cite{clarberg}.\\
 The method of Karl\'ik et al. does not change the sampling procedure itself and therefore can work without modifications of the environment map sampler~\cite{Karlik2019}.
 
-
-
-
-\todo{Sum up what others did in this field.}
+Herholz et al. worked on a method to create a pdf the resembles the whole product of the integral (BSDF and reflected light) we want to solve
+by training a Gaussian mixture model (GMM) for the individual factors with initial samples,
+which they then combine to draw samples during the integration~\cite{Herholz}.\\
+M\"uller et al. also worked on path guiding,
+where they used an algorithm that iteratively learns the radiance distribution in the scene to get better samples from their distribution~\cite{mueller2017}.\\
+The work of Karl\'ik et al. builds on the algorithm proposed by M\"uller et al. to further improve the guiding density~\cite{Karlik2019}.
