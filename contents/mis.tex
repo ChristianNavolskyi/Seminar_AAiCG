@@ -1,9 +1,11 @@
 \chapter{Multiple Importance Sampling}
 \label{ch:mis}
-
-\todo{Match to actual structure of this chapter}
-In this chapter the fundamentals of Monte Carlo integration and importance sampling will be introduced.
-Following that Multiple Importance Sampling is explained which is essential for the next chapter \ref{ch:mis_compensation}.
+In this chapter we will introduce all the theoretical background necessary to follow the upcoming chapters.
+We will start with the basic probability essentials followed by a section about drawing samples after an arbitrary function.
+Then we introduce the concept of Monte Carlo integration
+and have a short look at variance in that section too.
+After that importance sampling is explained
+and lastly multiple importance sampling will be introduced with the balance heuristic being the final section.
 
 
 \section{Probability Basics}
@@ -22,14 +24,13 @@ But we can still express our probability for an angle interval with the cdf from
 In the continuous case we have a pdf that is used to calculate the cdf with $$ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x}. $$
 The pdf has to be non-negative ($ \forall x: p(x) \geq 0 $) and integrate to one ($ \int_{-\infty}^{\infty} p(x) dx = 1$) to be valid and
 \enquote{[...] describes the relative probability of a random variable taking on a particular value}~\cite[Chapter~13.1]{pbr-book}.
-\todo{How to cite when the content of this section was created with a reference?}
 
 
 \section{Generating Samples after a specific Function}
 \label{sec:sample_generation}
-This will be essential for the next section \ref{sec:monte_carlo},
+Knowing how to sample after a specific distribution is essential for the next section \ref{sec:monte_carlo},
 since this is our adjustment wheel to manipulate the quality of our rendering (for a given amount of time).
-Most of the time we don't need evenly distributed samples,
+Most of the time we don't need uniformly distributed samples,
 rather our samples should follow a specific characteristic of a material or a scene.
 For this we need to know how to generate samples that correspond to that characteristic.
 
@@ -46,6 +47,7 @@ Now we only need to draw an equally distributed random number (which most progra
 which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed proportional to $ f(.) $.
 This method is called "inverse cdf"~\cite{pris}.
 \todo{Should I also cover 2D sampling?}
+
 \todo{Should I cover more sampling methods (rejection sampling e.g.)}
 
 
