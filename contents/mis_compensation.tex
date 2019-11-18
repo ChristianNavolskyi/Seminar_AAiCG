@@ -1,17 +1,51 @@
 \chapter{Multiple Importance Sampling Compensation}
 \label{ch:mis_compensation}
-Short intro
+Short intro with reference that all this is from the paper
 
 mis balance heuristic too defensive -> oversampling of low valued and undersampling of high valued areas
 name comes from modifying one pdf directly to compensate the averaging effect in the balance heuristic
 
-Set of samplers, one is chosen to be modified to create a pdf that minimized the combined variance with the balance heuristic
+Set T of samplers, one is chosen (pt) called free to be modified to create a pdf that minimized the combined variance with the balance heuristic
 
+optimal solution has zero variance so peff should exactly match the integrand peff = f/F
+for the balance heuristic peff = q + ct * pt with q all techniques except the free one + the free one
+that gives definition of pt
+pt is not necessarily a valid pdf has to be positive and integrate to one
+clamping and normalizing
 
+sampling parts that other samplers cover well is wasted effort so the free pdf fills the missing part to create the perfect (at least better) pdf in regard to matching the integrand
+needs to know F beforehand, but can be approximated and will be shown
+still unbiased as for f > 0 pt is not 0 when q is zero. can only be zero when q is non zero but then we still have a valid pdf as only peff has to be > 0 which is the case when q is not zero.
+The pdf we created so far doesn't guarantee to reduce variance because of the max operator and the re-normalization
 
+in the next section we will derive a truly optimal pdf that provably does reduce variance in the one-sample estimator
+We will also show that our compensated free pdf is often close to being an optimal estimator.
 
 
 \section{Optimality}
 \label{sec:misc_optimality}
+write variance as second moment - F2 with second moment being formula and p opt\dots
+To avoid max and normalization we set two constraints\dots
+Formula from appendix to derive $ \lambda $.
+Since we need the max there is no analytical solution to the optimal pdf so it needs to be calculated iteratively which makes it impractical
+If the mis-compensated solution (from above in square braces in the paper) is close-enough to the optimal solution, which is often the case that can be used instead
+
+\subsection{Bounds for the MIS-compensated solution}
+To show the similarity of the optimal solution and the MIS-compensated one we derive following bounds \dots by \dots (appendix B)
+With eq. 9 we can easily see that the optimal and the compensated solution are equal and the lower bound applies. (just input into 9, fulfill conditions)
+with this we can assume that the optimal solution is often not far from the compensated one.
+In case they are not the same we want to see how badly using the compensated pdf over the optimal one can increase variance
+the highest increase would be 1 / ct over the optimal solution.
+to get a concrete number for the introduced variance multiple scenes were tested with the worst result being 1.6 times
+
+They showed that the compensated pdf is often similar to the optimal one.
+In case they are not the same it is expensive to calculate the optimal pdf since it involves iteratively evaluating the integral and checking if the conditions hold true
+the mis-compensated solution can be used because it is easy to calculate with an approximation of F and is still a good overall solution.
+
+\todo{is it okay to refer to the original paper for the derivation of the optimal solution (appendix proovs)}
+
+
+
+\todo{show how F will be approximated by $\lambda$. maybe no approach to approximation is shown}
 
 \todo{Explain their work. Formulas should be clearly explained.}

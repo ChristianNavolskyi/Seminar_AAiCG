@@ -200,7 +200,8 @@ the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 \begin{figure}[h]
     \centering
     \includegraphics[width=.45\textwidth]{images/veach_mis_both.png}
-    \caption{This image shows the same scene as in figure \ref{fig:veach_mis_single} but rendered using the balance heuristic. Taken from~\cite[Figure~9.4]{veach-thesis}.}
+    \caption{This image shows the same scene as in figure \ref{fig:veach_mis_single} but rendered using the balance heuristic.
+    Taken from~\cite[Figure~9.4]{veach-thesis}.}
     \label{fig:veach_mis_balance}
 \end{figure}
 
@@ -221,4 +222,4 @@ The $ 1 / N $ term comes from $ n_m = c_m * N $.
 When we compare the last line with the initial estimator from equation~\ref{eq:monte_carlo_integral}
 we see that they are identical with $ p(x) = p_{eff}(x) = \sum_{m = 1}^k c_m p_m(x) $.
 With that we can conclude that using MIS with the balance heuristic
-corresponds to a normal MIS estimator drawing samples from a combined sampling distribution.
+corresponds to a normal MIS estimator drawing samples from a combined sampling distribution~\cite[Chapter~9.2.2.1]{veach-thesis}.
