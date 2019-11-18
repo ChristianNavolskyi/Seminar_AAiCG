@@ -166,7 +166,11 @@ But now the top right reflection is noisy because the direction to a random poin
 
 If we could combine both approaches the result should cover all cases and show all reflections well.
 To do this Veach introduced Multiple Importance Sampling~\cite[Chapter~9]{veach-thesis}.
-The updated estimator now looks like this: $$ F = \sum_{i = 1}^k \frac{1}{n_i} \sum_{j = 1}^{n_i} w_i(X_{i,j}) \frac{f(X_{i,j})}{p(X_{i,j})}. $$
+The updated estimator now looks like this:
+\begin{equation}
+    \label{eq:mis_estimator}
+    F = \sum_{i = 1}^k \frac{1}{n_i} \sum_{j = 1}^{n_i} w_i(X_{i,j}) \frac{f(X_{i,j})}{p_i(X_{i,j})}.
+\end{equation}
 Compared to the initial estimator from equation \ref{eq:monte_carlo_integral} we now have additional weight functions $ w_i(.) $
 and split up our samples over the $ k $ different sampling technique with $ n = \sum_{i = 1}^k~n_i $.
 To keep the estimator unbiased the weighting function need to fulfill two constraints:
@@ -184,7 +188,11 @@ A concrete weighting function will be introduced in the next subsection.
 \subsection{Balance Heuristic}
 \label{sec:balance_heuristic}
 A very popular weighting function also introduced by Veach is the balance heuristic~\cite[Chapter~9.2.2]{veach-thesis}.
-The formula to calculate it is as follows: $$ w_i(x) = \frac{n_i p_i(x)}{\sum_{j = 1}^k n_j p_j(x)} $$
+The formula to calculate it is as follows:
+\begin{equation}
+    \label{eq:balance_weighting}
+    w_i(x) = \frac{n_i p_i(x)}{\sum_{j = 1}^k n_j p_j(x)}.
+\end{equation}
 So the weight for a sample consists of the amount of samples $ n_i $ drawn with that technique,
 the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 \todo{show how it falls down to a simple standard monte carlo estimator when inserting into the formula (when more text is needed?)}
@@ -199,3 +207,18 @@ the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 Figure \ref{fig:veach_mis_balance} show that with the balance heuristic the noisy areas we observed
 while only using a single pdf in figure \ref{fig:veach_mis_single} disappeared
 and all combinations of surface roughness and light source size are well represented.
+When we insert the weighting function from equation~\ref{eq:balance_weighting} into equation~\ref{eq:mis_estimator}
+we get the following:
+\begin{equation*}
+\begin{aligned}
+    F &= \sum_{i = 1}^k \frac{1}{n_i} \sum_{j = 1}^{n_i} \frac{n_i p_i(X_{i,j})}{\sum_{m = 1}^k n_m p_m(X_{i,j})} \frac{f(X_{i,j})}{p_i(X_{i,j})}\\
+    &= \sum_{i = 1}^k \sum_{j = 1}^{n_i} \frac{f(X_{i,j})}{\sum_{m = 1}^k n_m p_m(X_{i,j})}\\
+    &= \frac{1}{N} \sum_{i = 1}^N \frac{f(X_{i})}{\sum_{m = 1}^k c_m p_m(X_{i})}\\
+    &=\frac{1}{N} \sum_{i = 1}^N \frac{f(X_{i})}{p_{eff}(X_i)}.
+\end{aligned}
+\end{equation*}
+The $ 1 / N $ term comes from $ n_m = c_m * N $.
+When we compare the last line with the initial estimator from equation~\ref{eq:monte_carlo_integral}
+we see that they are identical with $ p(x) = p_{eff}(x) = \sum_{m = 1}^k c_m p_m(x) $.
+With that we can conclude that using MIS with the balance heuristic
+corresponds to a normal MIS estimator drawing samples from a combined sampling distribution.
