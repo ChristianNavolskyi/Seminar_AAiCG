@@ -14,7 +14,7 @@ This approach is called image based lighting and was introduced back in 1998 by 
 To get the lighting of a scene in the real world you could place a mirror sphere in the middle of your scene
 and the a photo of that sphere ideally from far away
 so the camera itself doesn't take up a large part of the scene.
-The name of this method is sphere mapping.
+This method is called sphere mapping.
 During rendering you place your scene in the center of that textured sphere
 and if a shadow ray doesn't hit any object of the scene you read out the texel
 on the sphere that corresponds to the direction of the ray.\\
@@ -22,11 +22,59 @@ A different method is to take six pictures of the scene from the top, bottom, le
 and then use the same evaluation method as with the sphere with the direction of the shadow ray direction
 to get the texel from the environment map.
 For more information on how to use environment maps/image based lighting consider~\cite{environment_map}.
-\todo{Information about sampling the environment map}
 
 
 \section{MIS Compensation in Image Based Lighting}
 \label{sec:misc_ibl}
+Here we will discuss the application example from Karl\'ik et al. in~\cite[Section~6-7]{Karlik2019}.
+
+
+\subsection{Setup}
+\label{sec:ibl_setup}
+They calculate the unoccluded direct illumination with the following rendering equation:
+\begin{equation*}
+    L_{dir}(x, \omega_o) = \int_{H(n)} L_I(\omega_i) f_r(x, \omega_i, \omega_o) |n \cdot \omega_i|_+ d\omega_i.
+\end{equation*}
+$ x $ is the surface position and $ \omega_o $ the outgoing view direction.
+The integration domain $ H(n) $ is the upper hemisphere centered around the normal $ n $.
+The HDR environment map is used through $ L_I(w_i) $,
+$ f_r(x, \omega_i, \omega_o) $ corresponds to the BRDF at position $ x $
+with incoming direction $ \omega_i $ and outgoing direction $ \omega_o $.
+$ |n \cdot \omega_i|_+ $ is the positive cosine of the angle between the normal and the incoming direction i.e. $ max\{0, |n \cdot \omega_i|\} $.\\
+In a standard Monte Carlo renderer two pdfs would be used,
+one proportional to the BRDF-cosine product and another one proportional to the environment map.
+Those two would then be combined in MIS with the balance heuristic.
+Generally the BRDF-cosine product pdf is given analytically and depends on the position, the outgoing and the incoming direction
+whereas the environment map pdf is mostly tabulated and only depends on the incoming direction.
+Since the second one is easier to modify,
+that one was used as the free pdf in their work.
+
+
+\subsection{PDF solutions}
+\label{sec:ibl_pdfs}
+general sampling density is obtained by inserting render eq from \ref{sec:ibl_setup} into equation \ref{eq:valid_compensated_pdf} and get \dots
+Solution depends on out direction and position and tabulation would be impractical for that so more applicable approximate solutions are presented
+
+
+\subsubsection{Normal-dependend solution}
+\label{sec:ibl_normal_dependent}
+For this they assumed a diffuse BRDF with albedo $ \rho \equiv \frac{1}{\pi} $.
+depends on normal direction but can be easily precomputed for a number of directions.
+is practical but uses much memory and might need changes in the rendering implementation.
+
+
+\subsubsection{Normal-independend solution}
+\label{sec:ibl_normal_independend}
+Therefore this method gets rid of the normal dependency by averaging over all normal directions (for more detailed explanation see ~\cite[Appendix~D]{Karlik2019}).
+"Formula"
+corresponds to simple subtraction from the tabulated HDR map pdf and re-normalization
+
+
+
+\subsection{Evaluation}
+\label{sec:ibl_evalutiona}
+
+
 \todo{Explain how their approach improves ibl variance}
 
 
