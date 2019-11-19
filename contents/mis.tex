@@ -96,13 +96,14 @@ With the variance from equation \ref{eq:monte_carlo_variance} let's see how we c
 We can easily see that reducing the term $ \frac{f(x)}{p(x)} - F $ will finally reduce the variance the most since it will be exponentiated.
 Since $ F $ and $ f(.) $ are fixed (that is the integral we want to calculate) only $ p(.) $ is left for modification.
 When we choose $$ p(x) = \frac{f(x)}{\int_{a}^b f(x) dx} $$ we get
-\begin{equation*}
+\begin{equation}
+\label{eq:zero_variance}
 \begin{aligned}
     \frac{f(x)}{p(x)} - F &= \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F \\
         &\stackrel{\ref{eq:integral_fx}}{=} \int_{a}^b f(x) dx - \int_{a}^b f(x) dx
         &= 0
 \end{aligned}
-\end{equation*}
+\end{equation}
 which is ideal as we get a variance of 0 and are done.
 The problem is that we don't know the integral at the start since that is what we want to calculate in the first place.
 When we look at our chosen pdf we see that $ p(.) $ is proportional to $ f(.) $ by a factor $ \frac{1}{\int_{a}^b f(x) dx} = \frac{1}{F} := c $.

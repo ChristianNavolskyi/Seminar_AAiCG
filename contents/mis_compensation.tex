@@ -1,29 +1,77 @@
 \chapter{Multiple Importance Sampling Compensation}
 \label{ch:mis_compensation}
-Short intro with reference that all this is from the paper
+This chapter will cover the theory behind MIS compensation as proposed by Karl\'ik et al. in~\cite{Karlik2019}.
+First the basic idea of MIS compensation will be explained after which the variance reduction will be proven.
 
-mis balance heuristic too defensive -> oversampling of low valued and undersampling of high valued areas
-name comes from modifying one pdf directly to compensate the averaging effect in the balance heuristic
+As we can see in figure~\ref{fig:pdf_comparison} when we use our pdfs regularly with the balance heuristic
+the resulting pdf is too defensive as the high values are undersampled and the low values are oversampled.
+The name for their techniques comes from the compensation for the averaging of the balance heuristic.
+One resulting pdf of their approach can be seen in figure~\ref{fig:optimized_mis}.
 
-Set T of samplers, one is chosen (pt) called free to be modified to create a pdf that minimized the combined variance with the balance heuristic
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/original_setup.png}
+        \caption{Original pdfs}
+        \label{fig:original_setup}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/mis_setup.png}
+        \caption{Original MIS}
+        \label{fig:original_mis}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[b]{.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/optimized_setup.png}
+        \caption{Optimized pdfs
+        \label{fig:optimized_setup}}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/mis_optimized.png}
+        \caption{Optimized MIS}
+        \label{fig:optimized_mis}
+    \end{subfigure}
+    \caption{Comparison of the original pdfs without compensation~(\ref{fig:original_setup})
+    and how the combined pdf looks like with the balance heuristic~(\ref{fig:original_mis})
+    with the modified pdf~(\ref{fig:optimized_setup}) and the balance heuristic using the optimized pdf~(\ref{fig:optimized_mis}).
+    f (gray) is the function we want to integrate.
+    Figure~\ref{fig:original_mis} shows that the high values are undersampled and the low values are oversampled (see the red arrows).
+    The optimized pdfs match the integrand much better when using MIS as seen in figure~\ref{fig:optimized_mis}.
+    Figures taken from~\cite[Figure~2]{Karlik2019}.}
+    \label{fig:pdf_comparison}
+\end{figure}
 
-optimal solution has zero variance so peff should exactly match the integrand peff = f/F
-for the balance heuristic peff = q + ct * pt with q all techniques except the free one + the free one
-that gives definition of pt
-pt is not necessarily a valid pdf has to be positive and integrate to one
-clamping and normalizing
+From a given set of samplers $ T $ they pick one sampler $ t \in T $ and call its pdf $ p_t $ the free pdf that will be used for compensation
+so that the combined pdf reduces the variance when used with the balance heuristic.
 
-sampling parts that other samplers cover well is wasted effort so the free pdf fills the missing part to create the perfect (at least better) pdf in regard to matching the integrand
-needs to know F beforehand, but can be approximated and will be shown
-still unbiased as for f > 0 pt is not 0 when q is zero. can only be zero when q is non zero but then we still have a valid pdf as only peff has to be > 0 which is the case when q is not zero.
-The pdf we created so far doesn't guarantee to reduce variance because of the max operator and the re-normalization
+In an optimal solution the combined pdf $ p_{eff}(x) = f(x)/F $ would lead to zero variance as shown in equation~\ref{eq:zero_variance}.
+For the purposes of MIS compensation the combined pdf can also be written as $ p_{eff}(x) = q(x) + c_t p_t(x) $ where $ q(x) = \sum_{i \in T/\{t\}} c_i p_i(x) $
+and $ p_t $ is the free pdf with $ c_t $ being its fraction of the total samples.
+Whe can reorder to get a formula for
+\begin{equation}
+    \label{eq:compensated_pdf}
+    p_t(x) = \frac{f(x)}{c_t F} - \frac{q(x)}{c_t}.
+\end{equation}
+This however does not guarantee that $ p_t $ is a valid pdf,
+for this they clamped and normalized it and got this formula: $$ \tilde{p}_t(x) = \frac{1}{b} max\{0, p_t(x)\} $$ with a normalization factor of $ b = \int_X max\{0, p_t(x)\} dx $.
 
-in the next section we will derive a truly optimal pdf that provably does reduce variance in the one-sample estimator
-We will also show that our compensated free pdf is often close to being an optimal estimator.
+Their compensated pdf fills the gap between the other samplers and the target function $ f(x) $
+since it effectively samples only the parts that the other samplers missed in regard to $ f(x) $.
+Whenever $ f(x) > 0 $ also $ p_{eff}(x) > 0 $ has to hold true for it to be unbiased.
+When we assume $ q(x) = 0 $ then $ p_t(x) > 0 $, because of its definition~\ref{eq:compensated_pdf}.
+If $ q(x) > 0 $ then $ p_t(x) $ could become $ 0 $, but then still $ p_{eff}(x) > 0 $ would be the case.
+So the combined pdf is valid but it doesn't guarantee to reduce variance, because of the max operator and the re-normalization.
 
 
 \section{Optimality}
 \label{sec:misc_optimality}
+\todo{Ulala}
 write variance as second moment - F2 with second moment being formula and p opt\dots
 To avoid max and normalization we set two constraints\dots
 Formula from appendix to derive $ \lambda $.
@@ -43,8 +91,6 @@ In case they are not the same it is expensive to calculate the optimal pdf since
 the mis-compensated solution can be used because it is easy to calculate with an approximation of F and is still a good overall solution.
 
 \todo{is it okay to refer to the original paper for the derivation of the optimal solution (appendix proovs)}
-
-
 
 \todo{show how F will be approximated by $\lambda$. maybe no approach to approximation is shown}
 
