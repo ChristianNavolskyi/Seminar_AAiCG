@@ -46,11 +46,9 @@
 % for more sophisticated algorithm listings
 
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{csquotes}
 \usepackage{mathtools}
-
-\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
-\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
 \usepackage[raiselinks=true,
 						bookmarks=true,

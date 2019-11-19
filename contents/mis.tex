@@ -61,8 +61,8 @@ For the next step we need the law of large numbers which states that $$ P\left[ 
 with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expected value~\cite[Chapter~2.4.1]{veach-thesis}.
 From here we can formulate
 \begin{equation*}
-    \int_{a}^b g(x) p(x) dx \stackrel{definition}{=} E(g(x))
-    \stackrel{law~of~large~numbers}{\approx} \frac{1}{N} \sum_{i = 1}^N g(x_i)
+    \int_{a}^b g(x) p(x) dx \overset{definition}= E(g(x))
+    \overset{law~of~large~numbers}\approx \frac{1}{N} \sum_{i = 1}^N g(x_i)
 \end{equation*}
 and with $ g(x) = \frac{f(x)}{p(x)} $
 \begin{equation}
@@ -99,9 +99,9 @@ When we choose $$ p(x) = \frac{f(x)}{\int_{a}^b f(x) dx} $$ we get
 \begin{equation}
 \label{eq:zero_variance}
 \begin{aligned}
-    \frac{f(x)}{p(x)} - F &= \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F \\
-        &\stackrel{\ref{eq:integral_fx}}{=} \int_{a}^b f(x) dx - \int_{a}^b f(x) dx
-        &= 0
+    \frac{f(x)}{p(x)} - F =& \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F \\
+    \overset{\ref{eq:integral_fx}}=& \int_{a}^b f(x) dx - \int_{a}^b f(x) dx\\
+        =&~0
 \end{aligned}
 \end{equation}
 which is ideal as we get a variance of 0 and are done.

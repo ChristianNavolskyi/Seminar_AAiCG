@@ -71,7 +71,12 @@ So the combined pdf is valid but it doesn't guarantee to reduce variance, becaus
 
 \section{Optimality}
 \label{sec:misc_optimality}
-\todo{Ulala}
+In this section we want to find the truly optimal pdf $ p_t^*(x) $ for our free pdf.
+First we look at the variance
+which can be written as $ V(x) = E(x^2) - E(x)^2 $ that equals in our case $ V(p) = J(p) - F^2 $ with $ J(p) = \int_X \frac{f(x)^2}{q(x) + c_t p(x)} $.
+The optimal compensating pdf would then be $ p_t^*(x) = \underset{p}{arg~min}~J(p) $
+
+
 write variance as second moment - F2 with second moment being formula and p opt\dots
 To avoid max and normalization we set two constraints\dots
 Formula from appendix to derive $ \lambda $.
@@ -90,7 +95,7 @@ They showed that the compensated pdf is often similar to the optimal one.
 In case they are not the same it is expensive to calculate the optimal pdf since it involves iteratively evaluating the integral and checking if the conditions hold true
 the mis-compensated solution can be used because it is easy to calculate with an approximation of F and is still a good overall solution.
 
-\todo{is it okay to refer to the original paper for the derivation of the optimal solution (appendix proovs)}
+\todo{is it okay to refer to the original paper for the derivation of the optimal solution (appendix proovs). Yes it is, the idea should be clear here and the reference also to the paper.}
 
 \todo{show how F will be approximated by $\lambda$. maybe no approach to approximation is shown}
 
