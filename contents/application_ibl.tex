@@ -26,19 +26,20 @@ For more information on how to use environment maps/image based lighting conside
 
 \section{MIS Compensation in Image Based Lighting}
 \label{sec:misc_ibl}
-Here we will discuss the application example from Karl\'ik et al. in~\cite[Section~6-7]{Karlik2019}.
+Here we will discuss the image based lighting application example from Karl\'ik et al. in~\cite[Section~6-7]{Karlik2019}.
 
 
 \subsection{Setup}
 \label{sec:ibl_setup}
 They calculate the unoccluded direct illumination with the following rendering equation:
-\begin{equation*}
-    L_{dir}(x, \omega_o) = \int_{H(n)} L_I(\omega_i) f_r(x, \omega_i, \omega_o) |n \cdot \omega_i|_+ d\omega_i.
-\end{equation*}
+\begin{equation}
+    \label{eq:ibl_render_equation}
+    L_{dir}(x, \omega_o) = \int_{H(n)} L_I(\omega_i) \rho(x, \omega_i, \omega_o) |n \cdot \omega_i|_+ d\omega_i.
+\end{equation}
 $ x $ is the surface position and $ \omega_o $ the outgoing view direction.
 The integration domain $ H(n) $ is the upper hemisphere centered around the normal $ n $.
 The HDR environment map is used through $ L_I(w_i) $,
-$ f_r(x, \omega_i, \omega_o) $ corresponds to the BRDF at position $ x $
+$ \rho(x, \omega_i, \omega_o) $ corresponds to the BRDF at position $ x $
 with incoming direction $ \omega_i $ and outgoing direction $ \omega_o $.
 $ |n \cdot \omega_i|_+ $ is the positive cosine of the angle between the normal and the incoming direction i.e. $ max\{0, |n \cdot \omega_i|\} $.\\
 In a standard Monte Carlo renderer two pdfs would be used,
@@ -52,27 +53,40 @@ that one was used as the free pdf in their work.
 
 \subsection{PDF solutions}
 \label{sec:ibl_pdfs}
-general sampling density is obtained by inserting render eq from \ref{sec:ibl_setup} into equation \ref{eq:valid_compensated_pdf} and get \dots
-Solution depends on out direction and position and tabulation would be impractical for that so more applicable approximate solutions are presented
+To get the compensated pdf sampling technique equation~\ref{eq:ibl_render_equation}
+and the BRDF sampling pdf $ p_{\rho}(x, \omega_i, \omega_o) $ are inserted into equation~\ref{eq:valid_compensated_pdf}
+to get $$ \tilde{p}_I(x, \omega_i, \omega_o) = \frac{1}{b} max\{0, \frac{f_I(x, \omega_i, \omega_o)}{c_I L_{dir}(x, \omega_o)} - \frac{1 - c_I}{c_I} p_\rho(x, \omega_i, \omega_o)\} $$
+where $ f_I(x, \omega_i, \omega_o) = L_I(\omega_i) \rho(x, \omega_i, \omega_o) |n \cdot \omega_i|_+ $,
+$ c_I $ is the proportion of samples for the free pdf and b is the normalization factor to make it integrate to one.
+Since this solution depends on the position, the incoming and the outgoing direction they proposed a simpler solution we will show in the upcoming section.
 
 
 \subsubsection{Normal-dependend solution}
 \label{sec:ibl_normal_dependent}
-For this they assumed a diffuse BRDF with albedo $ \rho \equiv \frac{1}{\pi} $.
-depends on normal direction but can be easily precomputed for a number of directions.
-is practical but uses much memory and might need changes in the rendering implementation.
+To remove the dependency on the position and the outgoing direction they assumed a Lambertian BRDF with albedo $ \rho \equiv \frac{1}{\pi} $
+which yields: $$ \tilde{p}_I^{nd}(\omega_i, n) = \frac{1}{b_{nd}} max\{0, \frac{f_{nd}(\omega_i, n)}{c_I \int_{H(n)} f_{nd}(\omega, n) d\omega} - \frac{1 - c_I}{c_I} \frac{|n \cdot \omega_i|_+}{\pi}\}. $$
+This formula does depend on the surface normal,
+but it can still be precomputed for a number of directions.
+Since this solution is more practical than the more general one before it still might require changes in the rendering implementation.
+Therefore they introduced one more solution that uses less memory and has even less dependencies.
 
 
 \subsubsection{Normal-independend solution}
 \label{sec:ibl_normal_independend}
-Therefore this method gets rid of the normal dependency by averaging over all normal directions (for more detailed explanation see ~\cite[Appendix~D]{Karlik2019}).
-"Formula"
-corresponds to simple subtraction from the tabulated HDR map pdf and re-normalization
-
+This method averages over all normal directions (for a detailed explanation please refer to~\cite[Appendix~D]{Karlik2019})
+to get a pdf that is only dependent on the incoming direction: $$ p_I^{ni}(\omega_i) = \frac{1}{b_{ni}} max\{0, L_I(\omega_i) - 2 (1 - c_I) \bar{L}_I\}. $$
+As above $ b_{ni} $ is the normalization factor and $ \bar{L}_I $ is the average of the HDR map luminance.
+If we look close we see that the formula corresponds to a simple subtraction from the complete environment map and then re-normalizing it.
 
 
 \subsection{Evaluation}
 \label{sec:ibl_evalutiona}
+setup with figure
+figure of results and brdfs
+
+
+
+
 
 
 \todo{Explain how their approach improves ibl variance}
