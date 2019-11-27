@@ -1,12 +1,15 @@
 \chapter{Multiple Importance Sampling}
 \label{ch:mis}
 In this chapter we will introduce all the theoretical background necessary to follow the upcoming chapters.
-We will start with the basic probability essentials followed by a section about drawing samples after an arbitrary function.
-Then we introduce the concept of Monte Carlo integration
-and have a short look at variance in that section too.
-After that importance sampling is explained
-and lastly multiple importance sampling will be introduced with the balance heuristic being the final section.
+We will start with the basic probability essentials~\ref{sec:probability_basics}
+followed by a section about drawing samples after an arbitrary function~\ref{sec:sample_generation}.
+Then we will introduce the concept of Monte Carlo integration~\ref{sec:monte_carlo}
+and have a short look at variance~\ref{sec:variance} in that section too.
+After that importance sampling~\ref{sec:importance_sampling} is explained
+and lastly multiple importance sampling~\ref{sec:multiple_importance_sampling} will be introduced
+with the balance heuristic~\ref{sec:balance_heuristic} being the final section.
 
+\todo{look for lecture slides content in the book}
 
 \section{Probability Basics}
 \label{sec:probability_basics}
@@ -46,9 +49,6 @@ The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ w
 Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
 which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed proportional to $ f(.) $.
 This method is called "inverse cdf"~\cite{pris}.
-\todo{Should I also cover 2D sampling?}
-
-\todo{Should I cover more sampling methods (rejection sampling e.g.)}
 
 
 \section{Monte Carlo Integration}
@@ -113,6 +113,7 @@ The difficulty is that $ f(.) $ can be arbitrary complex so we might only be abl
 
 \section{Multiple Importance Sampling}
 \label{sec:multiple_importance_sampling}
+\todo{Introduct why the rendering equation is important for us. Keep here and introduce why we would need the rendering equation. Could also omit it and describe MIS in general.}
 The rendering equation
 \begin{equation}
     \label{eq:rendering_equation}
@@ -124,23 +125,24 @@ the reflected light at point $ x $ in direction $ \omega $ expressed as $ L_r(.)
 and the cosine to account for looking at an angle onto the surface $ |n \cdot \omega_o|^+ $
 where the $ ^+ $ means we are only taking values $ > 0 $ so only directions pointing into the upper hemisphere.
 With this we can see that a single pdf that only is proportional to e.g., the BSDF leaves out the $ L_r(.) $ term so it can't be optimal.
-Having multiple pdfs where each samples a different part of the rendering equation well
+Having multiple pdfs where each samples a different part of the rendering equation well,
 a combination of them should create a good result.
-E. Veach created a good example of this problem in his thesis~\cite{veach-thesis} which can be seen in figure \ref{fig:veach_mis_single}.
+E. Veach created a good example of this problem in his thesis~\cite{veach-thesis} which can be seen in Figure \ref{fig:veach_mis_single}.
 He also introduced Multiple Importance Sampling to use a combination of pdfs to get better results than would be possible with only one pdf.
 
-When sampling only the BSDF we see that in figure \ref{fig:veach_mis_bsdf} the bottom left reflection is very noisy,
+When sampling only the BSDF we see that in Figure \ref{fig:veach_mis_bsdf} the bottom left reflection is very noisy,
 because sampling a diffuse BSDF can give a wide range of directions
 and since the light source on the left is very small only very few directions will point directly on that light source.
-The more specular surfaces in that figure are well sampled which makes sense,
+The more specular surfaces in that Figure are well sampled which makes sense,
 because there are less possible directions to sample so the reflection will be well sampled.
 
-On the other hand figure \ref{fig:veach_mis_light} shows the same scene but sampled after the light sources
+On the other hand Figure \ref{fig:veach_mis_light} shows the same scene but sampled with regards to the light sources
 by sampling a random point on the light source and then evaluating the render equation to get the contribution.
 Here the opposite happened in the two corners we looked at before.
 The bottom left reflection is very well sampled
-since the direction to the light source is still valid (has some contribution in the BSDF) and therefore we can see the whole reflection.
-But now the top right reflection is noisy because the direction to a random point on the light source has no contribution in the BSDF.
+since the direction to the light source is still valid (it has some contribution in the BSDF) and therefore we can see the whole reflection.
+But the top right reflection now is noisy,
+because the direction to a random point on the light source has no contribution in the BSDF.
 
 \begin{figure}
     \centering
@@ -161,7 +163,7 @@ But now the top right reflection is noisy because the direction to a random poin
     and four horizontal objects with BSDFs from diffuse at the bottom to more and more specular at the top.\\
     (a) This scene is sampled using a pdf that is proportional to the BSDF of the surface.\\
     (b) Here the scene was sampled with a pdf that generated samples on the light source.
-    These graphics were taken from~\cite[Figure~9.2]{veach-thesis}.}
+    \cite[Figure~9.2]{veach-thesis}}
     \label{fig:veach_mis_single}
 \end{figure}
 
@@ -188,6 +190,7 @@ A concrete weighting function will be introduced in the next subsection.
 
 \subsection{Balance Heuristic}
 \label{sec:balance_heuristic}
+\todo{add discussion about optimality. Balance heuristic in MIS has good bounds (look in paper)}
 A very popular weighting function also introduced by Veach is the balance heuristic~\cite[Chapter~9.2.2]{veach-thesis}.
 The formula to calculate it is as follows:
 \begin{equation}
@@ -196,20 +199,19 @@ The formula to calculate it is as follows:
 \end{equation}
 So the weight for a sample consists of the amount of samples $ n_i $ drawn with that technique,
 the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
-\todo{show how it falls down to a simple standard monte carlo estimator when inserting into the formula (when more text is needed?)}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=.45\textwidth]{images/veach_mis_both.png}
-    \caption{This image shows the same scene as in figure \ref{fig:veach_mis_single} but rendered using the balance heuristic.
-    Taken from~\cite[Figure~9.4]{veach-thesis}.}
+    \caption{This image shows the same scene as in Figure \ref{fig:veach_mis_single} but rendered using the balance heuristic.
+    \cite[Figure~9.4]{veach-thesis}}
     \label{fig:veach_mis_balance}
 \end{figure}
 
-Figure \ref{fig:veach_mis_balance} show that with the balance heuristic the noisy areas we observed
-while only using a single pdf in figure \ref{fig:veach_mis_single} disappeared
+Figure \ref{fig:veach_mis_balance} shows that with the balance heuristic the noisy areas we observed,
+while only using a single pdf in Figure \ref{fig:veach_mis_single}, disappeared
 and all combinations of surface roughness and light source size are well represented.
-When we insert the weighting function from equation~\ref{eq:balance_weighting} into equation~\ref{eq:mis_estimator}
+When we insert the weighting function from Equation~\ref{eq:balance_weighting} into Equation~\ref{eq:mis_estimator}
 we get the following:
 \begin{equation*}
 \begin{aligned}
@@ -220,7 +222,7 @@ we get the following:
 \end{aligned}
 \end{equation*}
 The $ 1 / N $ term comes from $ n_m = c_m * N $.
-When we compare the last line with the initial estimator from equation~\ref{eq:monte_carlo_integral}
+When we compare the last line with the initial estimator from Equation~\ref{eq:monte_carlo_integral}
 we see that they are identical with $ p(x) = p_{eff}(x) = \sum_{m = 1}^k c_m p_m(x) $.
 With that we can conclude that using MIS with the balance heuristic
 corresponds to a normal MIS estimator drawing samples from a combined sampling distribution~\cite[Chapter~9.2.2.1]{veach-thesis}.

@@ -34,7 +34,7 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{vmargin}          % Adjust margins in a simple way
 \usepackage{fancyhdr}         % Define simple headings
-\usepackage{caption}
+\usepackage[font=footnotesize,labelfont=bf]{caption}
 \usepackage{subcaption}
 \usepackage{url}
 \usepackage[absolute,overlay]{textpos}

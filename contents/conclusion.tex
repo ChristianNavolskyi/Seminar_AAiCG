@@ -1,0 +1,24 @@
+\chapter{Conclusion}
+\label{ch:Conclusion}
+Karl\'ik et al.~\cite{Karlik2019} extended the options for variance reduction in the MIS domain
+by introducing a technique to modify one of the sampling densities to better fit the integrand.
+They derived a MIS-compensated pdf from the standard balance heuristic in an MIS setup to reduce variance.
+A practical and simpler pdf was presented for use in current renderers
+and also an optimal pdf that is difficult to create but shows what is possible.
+Examples in image-based lighting and path guiding were shown,
+where the advantage in IBL is much more substantial than in path guiding they could still improve both applications of MIS.
+
+
+\todo{write a little bit more and use italic captions}
+\paragraph{Future Work}
+\label{par:future_work}
+\textit{Specular BRDF} Karl\'ik et al.~\cite{Karlik2019} used a diffuse BRDF for their approximations
+and therefore the results excel when working with diffuse surfaces,
+but don't aid much when the BRDF becomes more specular.
+Therefore approximations that incorporate the BRDF could further reduce variance.
+
+\textit{Image-based lighting} In IBL they used unoccluded illumination which already improved the results a lot,
+but taking occlusion into account could also further improve results.
+
+\textit{Combining compensation and sample distribution} In their tests they used equal samples among all pdfs.
+Combining their approach with also optimally distributing samples over the used pdfs could additionally help with variance reduction.
