@@ -5,14 +5,16 @@
 and combines multiple different sampling techniques with a weighting function to sample a more complex function better.
 In their work they proposed a few different weighting functions the most famous being the balance heuristic,
 but also the power and cutoff heuristic which perform better in certain scenarios where one technique matches the integrand well.
-Despite the balance heuristic being provably good Kondapaneni et al.~\cite{Kondapaneni2019} developed a weighting function that is truly optimal
+Despite the balance heuristic being provably good,
+Kondapaneni et al.~\cite{Kondapaneni2019} developed a weighting function that is truly optimal
 and uses negative weights to achieve even better results.\\
 A lot of work has been put into optimizing the weighting functions,
 but Karl\'ik et al. followed a different approach
-and worked on a technique to adjust one sampling density to reduce the variance.
+and worked on a technique to adjust one sampling density to reduce the overall variance.
 
-\textit{Sample distribution} Another direction of research in the field of MIS is to figure out how to distribute the samples over the different sampling techniques.
-Pajot et al.~\cite{pajot} proposed a method where they calculate a so called representativity based on common rendering information such as the BRDF,
+\textit{Sample distribution} Another direction of research in the field of MIS deals with creating an optimal distribution of the samples over the different sampling techniques.
+Pajot et al.~\cite{pajot} proposed a method where they calculate a so called representativity,
+based on common rendering information such as the BRDF,
 which is a measure of how well a technique matches the integrand.
 In a one-sample estimator this representativity can also be used to derive a probability for each sampling strategy.\\
 Lu et al.~\cite{lu} created a method where no prior knowledge about the scene is needed to generate a sample distribution over two sampling strategies.
@@ -27,23 +29,23 @@ The first phase uses 20\% of the total samples equally distributed over all samp
 After that the following stage is subdivided into eight substages each using 10\% of the total number of samples
 and iteratively updating $ \sigma^2_i $ and calculating the distribution $ \alpha $ over the techniques for the next substage.\\
 What all the above techniques have in common is that they all rely on initial samples to fine tune their succeeding execution.
-The proposed method of Karl\'ik et al. on the other had doesn't need any prior samples to be taken and therefore their performance impact should be much smaller~\cite{Karlik2019}.
+The proposed method of Karl\'ik et al. on the other hand doesn't need any prior samples to be taken and therefore their performance impact should be much smaller~\cite{Karlik2019}.
 
 \textit{Image-based lighting} One widely used application of MIS is image-based lighting with BSDF and HDR map sampling~\cite{pbr-book}.
-When using a HDR environment map for direct illumination the pdf for that map is usually proportional to the brightness of the HDR map,
+When using a HDR environment map for direct illumination the pdf for that map is usually proportional to the brightness of the HDR map.
 Karl\'ik et al.~\cite{Karlik2019} created a method that alters that sampling density to further decrease the variance.
-Agarwal et al. came up with the idea of stratifying the environment map
+Agarwal et al.~\cite{agarwal} came up with the idea of stratifying the environment map
 and taking into account the visibility in the scene
-to create a method that can require up to two orders of magnitude fewer samples for the same quality~\cite{agarwal}.\\
-Another approach from Clarberg and Akenine-Möller uses product importance sampling
+to create a method that can require up to two orders of magnitude fewer samples for the same quality.\\
+Another approach from Clarberg and Akenine-Möller~\cite{clarberg} uses product importance sampling
 and creating the BRDF on the fly during rendering.
 Their precomputation step uses quadtree-based multiplication while during rendering they build the approximation of the BRDF
-and evaluate the product in only one single tree traversal which makes it perform faster than other methods~\cite{clarberg}.
-The method of Karl\'ik et al. does not change the sampling procedure itself and therefore can work without modifications of the environment map sampler~\cite{Karlik2019}.
+and evaluate the product in only one single tree traversal which makes it perform faster than other methods.
+The method of Karl\'ik et al.~\cite{Karlik2019} does not change the sampling procedure itself and therefore can work without modifications of the environment map sampler.
 
-\textit{Path guiding} Herholz et al. worked on a method to create a pdf that resembles the whole product of the integral (BSDF and reflected light) we want to solve
+\textit{Path guiding} Herholz et al.~\cite{Herholz} worked on a method to create a pdf that resembles the whole product of the integral (BSDF and reflected light) we want to solve,
 by training a Gaussian mixture model (GMM) for the individual factors with initial samples,
-which they then combine to draw samples during the integration~\cite{Herholz}.\\
-M\"uller et al. also worked on path guiding,
-where they used an algorithm that iteratively learns the radiance distribution in the scene to get better samples from their distribution~\cite{mueller2017}.
-The work of Karl\'ik et al. builds on the algorithm proposed by M\"uller et al. to further improve the guiding density~\cite{Karlik2019}.
+which they then combine to draw samples during the integration.\\
+M\"uller et al.~\cite{mueller2017} also worked on path guiding,
+where they used an algorithm that iteratively learns the radiance distribution in the scene to get better samples from their distribution.
+The work of Karl\'ik et al.~\cite{Karlik2019} builds on the algorithm proposed by M\"uller et al. to further improve the guiding density.

@@ -7,9 +7,7 @@ Then we will introduce the concept of Monte Carlo integration~\ref{sec:monte_car
 and have a short look at variance~\ref{sec:variance} in that section too.
 After that importance sampling~\ref{sec:importance_sampling} is explained
 and lastly multiple importance sampling~\ref{sec:multiple_importance_sampling} will be introduced
-with the balance heuristic~\ref{sec:balance_heuristic} being the final section.
-
-\todo{look for lecture slides content in the book}
+with the balance heuristic~\ref{sec:balance_heuristic} in the last section.
 
 \section{Probability Basics}
 \label{sec:probability_basics}
@@ -19,14 +17,14 @@ In a discrete scenario our random variable corresponds to one exact event e.g. a
 The probability for this can be expressed as $ P(X = 3) = \frac{1}{6} $ or as $ X(3) = \frac{1}{6} $
 since the random variable $ X $ can take six different values which are all equally likely.
 To express the probability that an event is within a range of values we can use the cdf
-which is defined as $$ F(x) = P(X \leq x), x \in \mathbb{R}. $$
-For the probability of a random variable in an interval $ [a, b) $ we can write $$ P(a \leq X < b) = F(b) - F(a)~\cite{pris}. $$
+which is defined as $$ F(x) = \sum_{i = -\infty}^x P(X = i) = P(X \leq x), x \in \mathbb{Z}. $$
 
 When we are talking about continuous events e.g. turning a wheel of fortune, every exact angle has a probability of nearing zero.
 But we can still express our probability for an angle interval with the cdf from above.
 In the continuous case we have a pdf that is used to calculate the cdf with $$ F(x) = \int_{-\infty}^x p(\tilde{x}) d\tilde{x}. $$
 The pdf has to be non-negative ($ \forall x: p(x) \geq 0 $) and integrate to one ($ \int_{-\infty}^{\infty} p(x) dx = 1$) to be valid and
 \enquote{[...] describes the relative probability of a random variable taking on a particular value}~\cite[Chapter~13.1]{pbr-book}.
+For the probability of a continuous random variable in an interval $ [a, b) $ we can write $$ P(a \leq X < b) = F(b) - F(a). $$
 
 
 \section{Generating Samples after a specific Function}
@@ -48,7 +46,7 @@ $ F $ can be used to normalize our goal function which yields us $ \tilde{f}(x) 
 The next step is to calculate our cdf as $ F(x) = \int_{a}^x \tilde{f}(t) dt $ which we will then invert to get $ F^{-1}(x) $.
 Now we only need to draw an equally distributed random number (which most programming languages have a library for) in the interval $ [0, 1) $
 which we call $ \xi $ and evaluate $ F^{-1}(\xi) = X $ to get $ X $ which is distributed proportional to $ f(.) $.
-This method is called "inverse cdf"~\cite{pris}.
+This method is called "inverse cdf".
 
 
 \section{Monte Carlo Integration}
@@ -56,7 +54,11 @@ This method is called "inverse cdf"~\cite{pris}.
 Monte Carlo integration is a technique to approximate the integral of an arbitrary function $ f(x) $
 by taking $ N $ random samples $ X_i $ from a pdf $ p(X_i) $.
 As we know the expectation of a random variable is calculated by $$ E(X) = \int_{-\infty}^\infty x p(x) dx $$
-or more generally $$ E(g(x)) = \int_{-\infty}^\infty g(x) p(x) dx. $$
+or more generally
+\begin{equation}
+    \label{eq:expectation}
+    E(g(x)) = \int_{-\infty}^\infty g(x) p(x) dx.
+\end{equation}
 For the next step we need the law of large numbers which states that $$ P\left[ \lim_{N\to\infty} \frac{1}{N} \sum_{i = 1}^N X_i = E(X) \right] = 1 $$
 with $ X_i $ drawn from $ p(.) $ which means that the average of our samples will converge to the expected value~\cite[Chapter~2.4.1]{veach-thesis}.
 From here we can formulate
@@ -68,26 +70,24 @@ and with $ g(x) = \frac{f(x)}{p(x)} $
 \begin{equation}
 \label{eq:monte_carlo_integral}
 \begin{aligned}
-    \int_{a}^b \frac{f(x)}{p(x)} p(x) dx &\approx \frac{1}{N} \sum_{i = 1}^N \frac{f(x)}{p(x)} \\
+    \int_{a}^b \frac{f(x)}{p(x)} p(x) dx &\approx \frac{1}{N} \sum_{i = 1}^N \frac{f(x)}{p(x)}
     \Leftrightarrow \int_{a}^b f(x) dx &\approx \frac{1}{N} \sum_{i = 1}^N \frac{f(x)}{p(x)}
 \end{aligned}
 \end{equation}
-which is the Monte Carlo estimator~\cite{pris}.
+which is the Monte Carlo estimator itself.
 
 
 \subsection{Variance}
 \label{sec:variance}
-Generally the variance is described by $$ V(X) = \frac{1}{N} \sum_{i = 1}^N (x_i - E(X))^2 $$ for discrete random variables~\cite{pris}
-and $$ V(X) = \int_{a}^b (x - I)^2 p(x) dx $$ with $ I $ being the mean of the random variable $ X $ for continuous variables~\cite{wyzant}.
+The variance is described by $$ V(f(x)) = E((f(x) - E(f(x)))^2) = \int_{a}^b (f(x) - E(f(x)))^2 p(x) dx $$ for continuous variables~\cite[Chapter~13.1.2]{pbr-book}.
 When we look at the variance of our Monte Carlo integral we get
 \begin{equation}
 \label{eq:monte_carlo_variance}
-\begin{aligned}
-    V(g(x)) &= \int_{a}^b (g(x) - F)^2 p(x) dx \\
-            &= \int_{a}^b \left(\frac{f(x)}{p(x)} - F\right)^2 p(x) dx
-\end{aligned}
+    V(g(x)) = \int_{a}^b (g(x) - E(g(x)))^2 p(x) dx
+            = \int_{a}^b (g(x) - F)^2 p(x) dx
+            = \int_{a}^b \left(\frac{f(x)}{p(x)} - F\right)^2 p(x) dx
 \end{equation}
-with $ F $ being the integral from equation \ref{eq:integral_fx}.
+with $ E(g(x)) \overset{\ref{eq:expectation}}= \int_a^b \frac{f(x)}{p(x)} p(x) dx = \int_a^b f(x) dx = F $ and $ g(x) = \frac{f(x)}{p(x)} $.
 
 
 \section{Importance Sampling}
@@ -98,13 +98,11 @@ Since $ F $ and $ f(.) $ are fixed (that is the integral we want to calculate) o
 When we choose $$ p(x) = \frac{f(x)}{\int_{a}^b f(x) dx} $$ we get
 \begin{equation}
 \label{eq:zero_variance}
-\begin{aligned}
-    \frac{f(x)}{p(x)} - F =& \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F \\
-    \overset{\ref{eq:integral_fx}}=& \int_{a}^b f(x) dx - \int_{a}^b f(x) dx\\
-        =&~0
-\end{aligned}
+    \frac{f(x)}{p(x)} - F = \frac{f(x)}{f(x)}\int_{a}^b f(x) dx - F
+    \overset{\ref{eq:integral_fx}}= \int_{a}^b f(x) dx - \int_{a}^b f(x) dx
+        =~0
 \end{equation}
-which is ideal as we get a variance of 0 and are done.
+which is ideal as we get a variance of 0.
 The problem is that we don't know the integral at the start since that is what we want to calculate in the first place.
 When we look at our chosen pdf we see that $ p(.) $ is proportional to $ f(.) $ by a factor $ \frac{1}{\int_{a}^b f(x) dx} = \frac{1}{F} := c $.
 So we should at least try to chose $ p(.) $ somewhat proportional to $ f(.) $.
@@ -113,22 +111,23 @@ The difficulty is that $ f(.) $ can be arbitrary complex so we might only be abl
 
 \section{Multiple Importance Sampling}
 \label{sec:multiple_importance_sampling}
-\todo{Introduct why the rendering equation is important for us. Keep here and introduce why we would need the rendering equation. Could also omit it and describe MIS in general.}
-The rendering equation
+One application for Monte Carlo integration in computer graphics is rendering images and videos by utilizing it
+to solve the rendering equation
 \begin{equation}
     \label{eq:rendering_equation}
-    L_o(x, \omega) = L_e(x, \omega) + \int_{\Omega^+} f_s(x, \omega, \omega_o) L_r(x, \omega_o) |n \cdot \omega_o|^+ d\omega_o
+    L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega^+} f_s(x, \omega_o, \omega_i) L_r(x, \omega_i) |n \cdot \omega_i|^+ d\omega_i
 \end{equation}
-consists of the emitted light at point $ x $ $ L_e(.) $,
+which consists of the emitted light $ L_e(.) $ at point $ x $,
 the bidirectional scattering distribution function (BSDF) $ f_s(.) $,
 the reflected light at point $ x $ in direction $ \omega $ expressed as $ L_r(.) $
 and the cosine to account for looking at an angle onto the surface $ |n \cdot \omega_o|^+ $
-where the $ ^+ $ means we are only taking values $ > 0 $ so only directions pointing into the upper hemisphere.
-With this we can see that a single pdf that only is proportional to e.g., the BSDF leaves out the $ L_r(.) $ term so it can't be optimal.
-Having multiple pdfs where each samples a different part of the rendering equation well,
+where the $ ^+ $ means we are only allowing values $ > 0 $,
+that corresponds to directions pointing into the upper hemisphere.
+With that equation we can see that a single pdf that only is proportional to e.g., the BSDF leaves out the $ L_r(.) $ term so it can't be optimal.
+With multiple pdfs where each samples a different part of the rendering equation well,
 a combination of them should create a good result.
 E. Veach created a good example of this problem in his thesis~\cite{veach-thesis} which can be seen in Figure \ref{fig:veach_mis_single}.
-He also introduced Multiple Importance Sampling to use a combination of pdfs to get better results than would be possible with only one pdf.
+He also introduced MIS to use a combination of pdfs to get better results than would be possible with only one pdf.
 
 When sampling only the BSDF we see that in Figure \ref{fig:veach_mis_bsdf} the bottom left reflection is very noisy,
 because sampling a diffuse BSDF can give a wide range of directions
@@ -146,14 +145,14 @@ because the direction to a random point on the light source has no contribution 
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/veach_mis_bsdf.png}
         \caption{Sampled after the BSDF}
         \label{fig:veach_mis_bsdf}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/veach_mis_light.png}
         \caption{Sampled after the light sources}
@@ -162,26 +161,26 @@ because the direction to a random point on the light source has no contribution 
     \caption{A scene with four light sources getting larger in diameter from left to right
     and four horizontal objects with BSDFs from diffuse at the bottom to more and more specular at the top.\\
     (a) This scene is sampled using a pdf that is proportional to the BSDF of the surface.\\
-    (b) Here the scene was sampled with a pdf that generated samples on the light source.
+    (b) Here the scene was sampled with a pdf that generated samples pointing on the light source.
     \cite[Figure~9.2]{veach-thesis}}
     \label{fig:veach_mis_single}
 \end{figure}
 
 If we could combine both approaches the result should cover all cases and show all reflections well.
-To do this Veach introduced Multiple Importance Sampling~\cite[Chapter~9]{veach-thesis}.
+To do this Veach introduced MIS~\cite[Chapter~9]{veach-thesis}.
 The updated estimator now looks like this:
 \begin{equation}
     \label{eq:mis_estimator}
     F = \sum_{i = 1}^k \frac{1}{n_i} \sum_{j = 1}^{n_i} w_i(X_{i,j}) \frac{f(X_{i,j})}{p_i(X_{i,j})}.
 \end{equation}
-Compared to the initial estimator from equation \ref{eq:monte_carlo_integral} we now have additional weight functions $ w_i(.) $
-and split up our samples over the $ k $ different sampling technique with $ n = \sum_{i = 1}^k~n_i $.
-To keep the estimator unbiased the weighting function need to fulfill two constraints:
+Compared to the initial estimator from equation \ref{eq:monte_carlo_integral} we now have an additional weight functions $ w_i(.) $
+and split up our samples over the $ k $ different sampling techniques with $ n = \sum_{i = 1}^k~n_i $.
+To keep the estimator unbiased the weighting function needs to fulfill two constraints:
 \begin{itemize}
     \item $ \sum_{i = 1}^n w_i(x) = 1 $ when $ f(x) \neq 0 $
     \item $ w_i(x) = 0 $ when $ p_i(x) = 0 $.
 \end{itemize}
-The first constraint makes sure that every point is neither reduced nor increased in its contribution
+The first constraint makes sure that no point $ x $ is reduced or increased in its contribution
 which is important to keep the estimator unbiased.
 The second constraint states that a pdf that could not create this sample also must have no weight
 so it will be ignored.
@@ -190,7 +189,6 @@ A concrete weighting function will be introduced in the next subsection.
 
 \subsection{Balance Heuristic}
 \label{sec:balance_heuristic}
-\todo{add discussion about optimality. Balance heuristic in MIS has good bounds (look in paper)}
 A very popular weighting function also introduced by Veach is the balance heuristic~\cite[Chapter~9.2.2]{veach-thesis}.
 The formula to calculate it is as follows:
 \begin{equation}
@@ -202,7 +200,7 @@ the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=.45\textwidth]{images/veach_mis_both.png}
+    \includegraphics[width=.4\textwidth]{images/veach_mis_both.png}
     \caption{This image shows the same scene as in Figure \ref{fig:veach_mis_single} but rendered using the balance heuristic.
     \cite[Figure~9.4]{veach-thesis}}
     \label{fig:veach_mis_balance}
@@ -210,7 +208,7 @@ the probability $ p_i(x) $ for that sample divided by the sum of all techniques.
 
 Figure \ref{fig:veach_mis_balance} shows that with the balance heuristic the noisy areas we observed,
 while only using a single pdf in Figure \ref{fig:veach_mis_single}, disappeared
-and all combinations of surface roughness and light source size are well represented.
+and all combinations of surface roughness and light source size are well represented.\\
 When we insert the weighting function from Equation~\ref{eq:balance_weighting} into Equation~\ref{eq:mis_estimator}
 we get the following:
 \begin{equation*}
@@ -226,3 +224,8 @@ When we compare the last line with the initial estimator from Equation~\ref{eq:m
 we see that they are identical with $ p(x) = p_{eff}(x) = \sum_{m = 1}^k c_m p_m(x) $.
 With that we can conclude that using MIS with the balance heuristic
 corresponds to a normal MIS estimator drawing samples from a combined sampling distribution~\cite[Chapter~9.2.2.1]{veach-thesis}.
+To show that the balance heuristic is a good choice for weighting the sampling techniques Veach proved that there is no significantly better solution with
+$$ V(\hat{F}) - V(F) = (\frac{1}{\min_i n_i} - \frac{1}{\sum_i n_i}) \mu^2 $$
+where $ \mu = E(F) = E(\hat{F}) $~\cite[Theorem~9.2]{veach-thesis}.
+So the balance heuristic is a provably good choice for the weighting in MIS,
+but in the next Chapter~\ref{ch:mis_compensation} we will see how we can even further improve MIS.

@@ -9,14 +9,14 @@ To avoid modelling a lighting environment a commonly used method is to create an
 and using that for the direct illumination of a scene.
 This approach is called image-based lighting and was introduced back in 1998 by Debevec in~\cite{debevec}.\\
 To get the lighting of a scene in the real world you could place a mirror sphere in the middle of your scene
-and the a photo of that sphere from far away
+and take a photo of that sphere from far away
 so the camera itself doesn't take up a large part of the scene.
 This method is called sphere mapping.
 During rendering you place your scene in the center of that textured sphere
-and if a shadow ray doesn't hit any object of the scene you read out the texel
+and if a ray doesn't hit any object of the scene you read out the texel
 on the sphere that corresponds to the direction of the ray.\\
 A different method is to take six pictures of the scene from the top, bottom, left, right, front and back
-and then use the same evaluation method as with the sphere with the direction of the shadow ray direction
+and then use the same evaluation method as with the sphere with the direction of the ray
 to get the texel from the environment map.
 For more information on how to use environment maps/image-based lighting consider~\cite{environment_map}.
 
@@ -50,12 +50,13 @@ that one was used as the free pdf in their work.
 
 \subsection{PDF solutions}
 \label{sec:ibl_pdfs}
-To get the compensated pdf sampling technique Equation~\ref{eq:ibl_render_equation}
+To get the MIS compensated pdf Equation~\ref{eq:ibl_render_equation}
 and the BRDF sampling pdf $ p_{\rho}(x, \omega_i, \omega_o) $ are inserted into Equation~\ref{eq:valid_compensated_pdf}
 to get $$ \tilde{p}_I(x, \omega_i, \omega_o) = \frac{1}{b} \max\{0, \frac{f_I(x, \omega_i, \omega_o)}{c_I L_{dir}(x, \omega_o)} - \frac{1 - c_I}{c_I} p_\rho(x, \omega_i, \omega_o)\} $$
 where $ f_I(x, \omega_i, \omega_o) = L_I(\omega_i) \rho(x, \omega_i, \omega_o) |n \cdot \omega_i|_+ $,
 $ c_I $ is the proportion of samples for the free pdf and b is the normalization factor to make it integrate to one.
-Since this solution depends on the position, the incoming and the outgoing direction they proposed a simpler solution which we will show in the upcoming section.
+Since this solution depends on the position, the incoming and the outgoing direction
+they proposed simpler solutions which we will show in the upcoming paragraphs.
 
 
 \paragraph{Normal-dependent solution}
@@ -68,7 +69,8 @@ which yields:
 \end{equation}
 This formula does depend on the surface normal,
 but it can still be precomputed for a number of directions.
-Since this solution is more practical than the more general one before it still might require changes in the rendering implementation.
+Although this solution is more practical than the more general one before,
+it still might require changes in the renderer implementation.
 Therefore they introduced one more solution that uses less memory and has even less dependencies.
 
 
@@ -77,7 +79,7 @@ Therefore they introduced one more solution that uses less memory and has even l
 This method averages over all normal directions (for a detailed explanation please refer to~\cite[Appendix~D]{Karlik2019})
 to get a pdf that is only dependent on the incoming direction: $$ p_I^{ni}(\omega_i) = \frac{1}{b_{ni}} \max\{0, L_I(\omega_i) - 2 (1 - c_I) \bar{L}_I\}. $$
 As above $ b_{ni} $ is the normalization factor and $ \bar{L}_I $ is the average of the HDR map luminance.
-If we look close we see that the formula corresponds to a simple subtraction from the complete environment map and then re-normalizing it.
+If we look close we see that the formula corresponds to a simple subtraction from the complete environment map and then re-normalizes it.
 
 
 \subsection{Evaluation}
@@ -104,12 +106,12 @@ The original pdfs seen in Figure~\ref{fig:ibl_pdfs} correspond to the HDR map (i
     \label{fig:ibl_pdfs}
 \end{figure}
 
-In Figure~\ref{fig:compensated_pdfs} the different pdf they proposed are shown
-where the Lagrange multiplier $ \lambda $ was calculated with a \enquote{iterative bisection root-finder within 100 iterations}~\cite[Section~6.3]{Karlik2019}.
-The MIS-compensated solution and the optimal one are almost identical with a discrepancy no larger than $ 10^{-5} $
+In Figure~\ref{fig:compensated_pdfs} the different pdfs they proposed are shown
+where the Lagrange multiplier $ \lambda $ for the optimal pdf was calculated with a \enquote{iterative bisection root-finder within 100 iterations}~\cite[Section~6.3]{Karlik2019}.
+The MIS compensated solution and the optimal one are almost identical with a discrepancy no larger than $ 10^{-5} $
 for the mean squared error (MSE) as tested by them in different setups.
 The practical pdfs only fit well for the diffuse case, because a diffuse BRDF was assumed in their creation.
-Note that the normal-dependent and normal-independent solution are almost the same except that the normal-independent one has some values for angles outside of $ [ -\frac{\pi}{2}, \frac{\pi}{2} ] $.
+Note that the normal-dependent and normal-independent solutions are almost the same except that the normal-independent one has some values for angles outside of $ [ -\frac{\pi}{2}, \frac{\pi}{2} ] $.
 
 \begin{figure}
     \centering
@@ -120,7 +122,7 @@ Note that the normal-dependent and normal-independent solution are almost the sa
 \end{figure}
 
 Figure~\ref{fig:error_plots} shows the MSE of a one-sample and a multi-sample estimator for the diffuse and sharp BRDFs from Figure~\ref{fig:ibl_pdfs}.
-For the diffuse BRDF of the one-sample estimator sampling from the HDR map compared to standard MIS is almost identical.
+The one-sample estimator with the diffuse BRDF that samples the HDR map (yellow dotted) is almost identical to standard MIS (purple dotted).
 Their normal-independent solution is 3.7 times better in regards to the MSE.
 The normal-dependent, optimal and compensated pdfs improve the MSE by a factor of 7.5.
 For the sharp BRDF the MSE is not improved when using one of the practical pdfs but more importantly it also doesn't worsen it which makes it a good choice compared to standard MIS,
@@ -149,7 +151,7 @@ The reason why optimal weights can't compete with an optimal pdf is, because no 
 
 They also did some experiments with real and synthetic scenes to verify their results as can be seen in Figure~\ref{fig:sphere_comparison} and~\ref{fig:pills}.
 We can see that the variance improvements vanish the lower the contrast of the HDR map becomes and the more specular the object is.
-In the Pills scene~\ref{fig:pills} we can clearly see that the compensation reduced the variance noticeably.
+In the Pills scene~\ref{fig:pills} we can clearly see that the compensation reduced the variance.
 
 \begin{figure}
     \centering

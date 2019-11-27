@@ -5,40 +5,44 @@ it has had a hugh impact in a variety of areas in computer graphics.
 Not only did it help to construct more advanced rendering algorithms like Vertex Connection and Merging~\cite{vcm},
 it also helped in calculating direct illumination from area light sources and environment maps~\cite[Chapter~14.3]{pbr-book}
 and subsurface scattering~\cite{King}.
-Besides being introduced in computer graphics MIS has also been used in other fields~\cite{he}.
+Although being introduced in computer graphics MIS has also been used in other fields~\cite{he}.
 
-Veach assumed \todo{rewrite (maybe whole paragraph)} For the proof of MIS being almost optimal the assumption was made,
-that the distribution of samples among the techniques and the sampling densities are given and fixed,
-in his proof of MIS being.
-The only things left for fine tuning was the weighting function
-with the balance heuristic being a popular and widely adopted choice because of its simplicity
-and proven tight bounds when only using non-negative weights~\cite[Theorem~9.2]{veach-thesis}.
-Recently researchers found that using not only non-negative weights can result in a truly optimal weighting function~\cite{Kondapaneni2019}.
-
-\todo{balance heuristic introduced}
-
-\todo{veach didn't notice non-negative, they didn't consider, recent paper considered that}
+To combine multiple sampling techniques Veach ang Guibas~\cite{veach_guibas} introduced the balance heuristic (more detail in~\ref{sec:balance_heuristic})
+to weight the different techniques and keep the estimator unbiased.
+The balance heuristic is a popular choice and widely adopted because of its simplicity
+and proven tight bounds~\cite[Theorem~9.2]{veach-thesis}.
+Recently researchers found that using also negative weights,
+which Veach and Guibas didn't consider,
+can result in a truly optimal weighting function~\cite{Kondapaneni2019}.
 
 No previous work examined the effect of designing a sampling density itself for application in the MIS framework.
-Karl\'ik et al. proposed a method to do exactly that and show that it can improve the MIS framework and reduce variance even further.
-They assumed multiple sampling techniques and picked one probability density function (pdf) of a technique
-and modified it in a way that it compensates for the averaging introduced by the balance heuristic.
+Karl\'ik et al.~\cite{Karlik2019} proposed a method to do exactly that and show that it can improve the MIS framework and reduce variance even further.
+They select one sampling probability density function (pdf)
+and modified it in a way that it compensates for the averaging effect of the balance heuristic.
 Their optimization can be applied beforehand and doesn't need adaptive updates like the work of Capp\'e et al.~\cite{Cappe2008}.
 Others created product sampling methods~\cite{Herholz} that try to match the integrand closer,
 but MIS compensation, as Karl\'ik et al. call their method,
-on the other hand can even cause a pdf to be further away from the integrand but still reduce the variance~\cite{Karlik2019}.
-
-\todo{shorten above paragraph}
+on the other hand can even cause a pdf to be further away from the integrand but still reduce the variance in combination with the other pdfs~\cite{Karlik2019}.
 
 Karl\'ik et al. show the effects of their MIS compensation with direct illumination using a HDR environment map
 and a scene with surfaces that have multiple different bidirectional reflectance distribution functions (BRDF).
 The standard approach with MIS would take samples proportional to the BRDF and the environment map,
 but they assume this approach to be too conservative and modify the pdf for the environment map in a way that the variance is reduced
-and therefore render times can be improved.
-Their modification is done by applying a formula to the tabulated pdf in a preprocessing step
-after which any renderer able to use HDR maps for MIS sampling can use the updated environment map for sampling without any further adjustment.\\
-They also used their approach in path guiding~\cite{Vorba_2019} which learns a guiding density to improve the algorithm of~\cite{mueller2017} by adjusting that density~\cite{Karlik2019}.
+and therefore render times are improved.
+Their modification is done by subtracting a value from the tabulated pdf in a preprocessing step
+after which any renderer that is able to use HDR maps for MIS sampling can use the updated environment map for sampling without any further adjustment.\\
+They also used their approach in path guiding~\cite{Vorba_2019},
+which learns a guiding density,
+to improve the algorithm of~\cite{mueller2017} by adjusting that density~\cite{Karlik2019}.
 
-\todo{write about the result here too}
+In their work~\cite{Karlik2019} they proposed different approaches to create compensating pdfs.
+The more practical ones either dependent on the normal direction or not and are less computational expensive
+compared to the MIS compensated solution which also depends on the position, incoming and outgoing directions.
+They also showed a theoretical optimal pdf and how to approximate it within some bounds.
+Their MIS compensated solution is almost as good as the optimal solution and both are far better than regular MIS without any compensating pdfs.
 
-\todo{explain the upcomming chapters}
+In the upcoming chapters we will first take a look at the related work~\ref{ch:related_work} around MIS, sample distribution, image-based lighting and path guiding.
+Next we introduce the concept of MIS in more detail in Chapter~\ref{ch:mis}.
+Then the proposed technique of Karl\'ik et al.~\cite{Karlik2019} is shown in Chapter~\ref{ch:mis_compensation}.
+The following two chapters will cover their application examples in image-based lighting~\ref{ch:application_ibl} and path guiding~\ref{ch:application_pg}.
+Finally we will conclude their work and list some open fields for future work~\ref{ch:conclusion}.
